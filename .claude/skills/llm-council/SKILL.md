@@ -1,118 +1,69 @@
 ---
 name: llm-council
-description: Convene a council of multiple models to answer one hard question — each member answers independently, then peer-reviews the others' answers anonymously, then a chairman synthesizes a final verdict. Use when the user asks to "convene the council", "ask the council", run a multi-model panel, get a second (or third) opinion, cross-examine an answer, or wants high-stakes advice where one model's answer isn't trustworthy enough — architecture decisions, design tradeoffs, risky refactors, ambiguous bug diagnoses, reviewing a plan or a piece of writing. Do NOT use for routine questions, quick lookups, or mechanical edits — the council is expensive and slow.
+description: Run a three-stage council that produces independent answers, anonymous peer rankings, and a chairman synthesis.
+argument-hint: "<question>"
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # LLM Council
 
-One model answering alone has one set of blind spots. The council pattern
-trades tokens and wall-clock time for coverage: several members answer the same
-question in isolation, judge each other blind, and a chairman writes the verdict.
+Treat `$ARGUMENTS` as the user's complete question. If it is empty, ask for one question and stop.
 
-Isolation is the whole point. Members must not see each other's answers in
-stage 1, and must not know whose answer they are grading in stage 2. Any
-leakage collapses the council into one opinion with extra steps.
+Complete all three stages below. Do not replace the council with your own direct answer. Do not assign personas such as critic, first-principles thinker, or implementer. Every member in a stage receives the same task.
 
-## When to convene
+## Stage 1: independent answers
 
-Convene when the cost of a wrong answer is high and the question is genuinely
-contestable: architecture and design tradeoffs, "is this plan sound", ambiguous
-diagnoses, security or data-loss risk, review of important writing.
+Launch exactly four independent general-purpose subagents in parallel with the Agent tool. Make all four calls before waiting for results. Do not show one member another member's answer.
 
-Do not convene for anything with one correct answer you can just look up, for
-mechanical edits, or when the user is in a hurry. Say plainly that the question
-does not need a council and answer it directly.
+Send each member the exact user question and this common instruction:
 
-## Stage 0 — Frame the question
+> Answer independently in 400 words or fewer. Optimize for factual accuracy and useful insight. State important assumptions and uncertainties. Support factual claims with evidence when tools or supplied context allow it. Do not discuss this council or guess what other members may say.
 
-Write the question once, as a self-contained brief. Every member gets the exact
-same text; they do not share your conversation history, so inline what matters:
+Request these model tiers for the four calls:
 
-- The question, stated sharply enough to disagree about.
-- Relevant code, with file paths and line numbers, pasted or named for reading.
-- Constraints that are already settled (stack, deadline, what must not change).
-- The output shape you want: a recommendation plus its strongest objection.
+1. `opus`
+2. `sonnet`
+3. `haiku`
+4. Omit the model parameter so it inherits the main conversation's model
 
-If the brief is vague, the council produces four vague answers and the synthesis
-is mush. Spend the effort here.
+If a requested tier is unavailable, retry that seat once with an available model. Record the requested tier and any retry. Do not claim which exact model ran unless the tool result confirms it.
 
-## Stage 1 — Independent answers
+After all calls return, randomly assign successful answers to `응답 A`, `응답 B`, `응답 C`, and `응답 D`. Keep the mapping private until Stage 2 is complete.
 
-Dispatch every member in **one message with multiple Agent calls** so they run
-concurrently. Give each an identical brief and a distinct seat.
+## Stage 2: anonymous evaluation
 
-Vary the seat, not the question. Two useful axes:
+Build one evaluation packet containing the original question and the complete, verbatim labeled answers. Do not summarize or shorten them. Remove model names, requested tiers, tool call identifiers, and wording that reveals the source outside the answer itself.
 
-- **Model** — pass a different `model` to each Agent call where more than one is
-  available (e.g. `opus`, `sonnet`, `haiku`, `fable`). Different models fail
-  differently, which is the diversity you are buying.
-- **Stance** — a short persona that biases what each member notices: the
-  implementer who has to ship it, the maintainer inheriting it in two years, the
-  adversary trying to break it, the reviewer who cares about the user's actual
-  goal.
+Launch exactly four new general-purpose evaluation subagents in parallel. Make all four calls before waiting for results. Use the same model-tier pattern as Stage 1.
 
-Three to five members is the working range. Two is a coin flip; beyond five the
-review stage gets expensive and the answers repeat.
+Send every evaluator the identical packet and this instruction:
 
-Ask each member for: a direct recommendation, the reasoning that supports it,
-its strongest failure mode, and its confidence. Tell them to say "not enough
-information" rather than guess — a member that hedges honestly is worth more in
-stage 2 than one that bluffs.
+> In 250 words or fewer, evaluate each response for factual accuracy and useful insight. Identify specific strengths, errors, unsupported claims, and missing considerations. Then rank all responses from best to worst with no ties. Judge the text only. Do not guess authorship. Return a short rationale followed by a final ranking in the form `응답 B > 응답 A > 응답 D > 응답 C`.
 
-If a member's tools let it read the repo, say which files are in scope; a member
-answering from the brief alone should be told so.
+Keep every evaluation. Do not collapse rankings into a vote before the chairman sees the rationales.
 
-## Stage 2 — Blind peer review
+## Stage 3: chairman synthesis
 
-Collect the answers, strip every trace of authorship, and relabel them
-`Response A`, `Response B`, … in a fixed order. Remove model names, personas,
-signature phrasing, and any "as the adversary, I…" framing.
+Launch one final general-purpose subagent as chairman. Request `opus`; if unavailable, use an available model and record the retry.
 
-Send the anonymized set back to each member (again, all Agent calls in one
-message). Each reviews **all** responses, including its own — which it cannot
-identify — and returns:
+Give the chairman all of the following:
 
-1. A ranking of the responses, best to worst.
-2. One sentence per response on what it gets right and what it gets wrong.
-3. Any claim it believes is factually false, named explicitly.
+- the original question
+- all labeled Stage 1 answers verbatim and in full
+- all Stage 2 evaluations and rankings verbatim and in full
 
-Rank on correctness and usefulness, not style or length. State that outright in
-the review prompt: reviewers reward long confident prose otherwise.
+Send this instruction:
 
-Skip stage 2 only when the stage-1 answers already agree on everything that
-matters — then say so and go straight to the verdict.
+> In 700 words or fewer, produce the best final answer to the original question. Use the evaluations as evidence, not as a majority vote. Resolve conflicts by checking reasoning and support in the original responses. Preserve important minority insights when well supported. State remaining uncertainty and the next verification step where relevant. Do not mention model identities.
 
-## Stage 3 — Chairman's verdict
+## Return the result
 
-You are the chairman. Do not average the rankings and crown a winner. Read the
-answers and the reviews and write the verdict yourself:
+Return one response with these sections:
 
-- **The answer.** One clear recommendation, in your own words, drawing on
-  whichever parts of whichever responses survive scrutiny.
-- **Why.** The reasoning that held up under review.
-- **Dissent.** Where members disagreed and what would settle it. A minority
-  answer that no reviewer could refute belongs here, named as such.
-- **Confidence.** Say plainly how sure the council is, and what evidence would
-  change the verdict.
+1. `## 1단계: 독립 답변` with `응답 A` through `응답 D`
+2. `## 2단계: 익명 평가` with each evaluator's critique and ranking
+3. `## 3단계: 의장 최종 답변` with the chairman's answer
+4. `## 실행 메모` with requested model tiers, failures, and retries
 
-A unanimous council is not proof — shared training data produces shared blind
-spots. If every member agrees, say the agreement was unanimous and note it is
-weak evidence when they are all variants of one model family.
-
-Never present the verdict as more certain than the reviews support, and never
-silently drop a dissent because it complicates the story.
-
-## Reporting back
-
-Lead with the verdict. Then the disagreements, which are the most informative
-output of the whole exercise. Keep per-member transcripts out of the reply
-unless the user asks — offer them instead.
-
-If the user asked for a specific member's take ("what did the adversary say?"),
-quote that member directly.
-
-## Cost
-
-A council is roughly N + N + 1 model calls on the same context: real money and
-real minutes. Convene it deliberately, tell the user when you are about to, and
-prefer a smaller council over a larger one when the question is narrow.
+If fewer than three Stage 1 answers or fewer than three Stage 2 evaluations succeed, stop and report that the council did not complete. Never invent missing responses or rankings.
