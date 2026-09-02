@@ -105,13 +105,18 @@ def _request(endpoint: str, params: dict, label: str):
     return root
 
 
-def probe_count(endpoint: str, year: str, label: str) -> int:
-    """해당 연도의 totalCount만 가볍게 조회. 호출 실패는 0으로 처리."""
+def probe_count(endpoint: str, year: str, label: str):
+    """(건수, 오류메시지)를 반환. 호출 자체가 실패하면 건수 -1.
+
+    '자료가 0건인 연도'와 '아예 못 불렀다'를 구분해야 원인을 제대로 안내할 수 있다.
+    """
     try:
         root = _request(endpoint, {"yr": year, "pageNo": "1", "numOfRows": "1"}, label)
-    except (requests.RequestException, SystemExit):
-        return 0
-    return int(root.findtext(".//totalCount") or 0)
+    except requests.RequestException as e:
+        return -1, f"{type(e).__name__} — 서버에 연결하지 못했습니다"
+    except SystemExit as e:
+        return -1, str(e).replace("\n", " ")
+    return int(root.findtext(".//totalCount") or 0), ""
 
 
 def detect_year(eps_with_labels) -> str:
@@ -121,13 +126,30 @@ def detect_year(eps_with_labels) -> str:
         return YEAR
     print("  연도 자동탐지 (최신부터)")
     for y in YEAR_CANDIDATES:
-        counts = [probe_count(ep, y, lb) for ep, lb in eps_with_labels]
+        probes = [probe_count(ep, y, lb) for ep, lb in eps_with_labels]
+        counts = [c for c, _ in probes]
+
+        # 호출 자체가 실패했으면 연도 문제가 아니다. 진짜 원인을 그대로 알린다.
+        for (_, lb), (c, err) in zip(eps_with_labels, probes):
+            if c < 0:
+                sys.exit(
+                    f"\n[중단] {lb} API를 호출하지 못했습니다: {err}\n"
+                    "  연도 문제가 아니라 호출이 실패한 것입니다. 확인 순서:\n"
+                    "   1) 인터넷 연결 및 방화벽 (apis.data.go.kr 접속 가능한지)\n"
+                    "   2) FTC_SERVICE_KEY 값이 맞는지\n"
+                    "   3) data.go.kr에서 해당 API 활용신청이 승인됐는지"
+                )
+
         state = " / ".join(f"{lb} {c:,}건" for (_, lb), c in zip(eps_with_labels, counts))
         print(f"    {y}: {state}")
         if all(c > 0 for c in counts):
             print(f"  -> {y}년 사용")
             return y
-    sys.exit(f"[중단] {YEAR_CANDIDATES} 중 두 데이터셋이 모두 있는 연도가 없습니다.")
+
+    sys.exit(
+        f"\n[중단] API는 정상 응답했지만 {YEAR_CANDIDATES} 어느 연도에도 자료가 없습니다.\n"
+        "  YEAR_CANDIDATES에 다른 연도를 추가해 보세요."
+    )
 
 
 def fetch_all(endpoint: str, label: str, year: str):
