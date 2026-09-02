@@ -63,6 +63,9 @@ def main():
     p.add_argument("--mlsfc", default="한식", help='업종중분류. ""면 전체')
     p.add_argument("--top", type=int, default=5)
     p.add_argument("--sort", default="회수개월_추정")
+    p.add_argument("--min-etc", type=int, default=1000,
+                   help="기타(인테리어·설비) 최소액(만원). 기본 1000. "
+                        "이하는 창업비 공시가 불완전해 회수개월이 왜곡됨. 0이면 필터 해제")
     p.add_argument("--list-mlsfc", action="store_true", help="업종중분류 목록만 출력")
     a = p.parse_args()
 
@@ -79,9 +82,20 @@ def main():
             print(f"  {lc:<6} {mc:<14} {n:>5,}건")
         return
 
+    dropped = [r for r in rows
+               if 0 < r["창업비용_만원"] <= a.max_cost
+               and r["추정월영업이익_만원"] >= a.min_profit
+               and r["가맹점수"] >= a.min_stores
+               and r["폐점률"] <= a.max_close
+               and r["연매출_만원"] > 0
+               and r["  기타_만원"] < a.min_etc
+               and (r["업종대"] == a.lclas if a.lclas else True)
+               and (r["업종중"] == a.mlsfc if a.mlsfc else True)]
+
     picks = [
         r for r in rows
         if 0 < r["창업비용_만원"] <= a.max_cost
+        and r["  기타_만원"] >= a.min_etc
         and r["추정월영업이익_만원"] >= a.min_profit
         and r["가맹점수"] >= a.min_stores
         and r["폐점률"] <= a.max_close
@@ -98,6 +112,10 @@ def main():
     print(f"{scope} · 창업비 {a.max_cost:,}만원 이하 · 추정 월순익 {a.min_profit:,}만원 이상")
     print(f"가맹점 {a.min_stores}개 이상 · 폐점률 {a.max_close:g}% 이하 · 정렬 {a.sort}")
     print(f"조건 통과 {total:,}건 중 상위 {len(picks)}건")
+    if dropped:
+        print(f"※ 창업비 공시 불완전(기타 {a.min_etc:,}만원 미만) {len(dropped)}건 제외: "
+              + ", ".join(d["브랜드"] for d in dropped[:5])
+              + (" 외" if len(dropped) > 5 else ""))
     print("=" * 62)
 
     if not total:

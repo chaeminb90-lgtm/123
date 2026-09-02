@@ -54,6 +54,9 @@ MIN_MONTH_PROFIT = 5000   # 추정 월영업이익 하한 (천원). 5000 = 500�
 PICK_MLSFC = "한식"       # 업종중분류. "" 로 두면 업종 제한 없음
 PICK_TOP_N = 5            # 몇 개 뽑을지
 PICK_SORT = "회수개월_추정"  # 정렬 기준. "추정월영업이익_만원"으로 바꾸면 순이익 큰 순
+MIN_ETC = 1000            # '기타(인테리어·설비)' 최소액 (만원). 이하는 공시 불완전으로 보고 제외.
+#   기타가 0~수백만원인 브랜드는 인테리어·주방설비가 창업비에 안 잡힌 것이라
+#   회수개월이 비정상적으로 짧게 나온다. 0으로 두면 필터 해제.
 
 # 추정 영업이익 가정 — 화면에 반드시 같이 표기할 것
 COST_RATIO = {         # 매출 대비 비용 비율 합계
@@ -251,6 +254,8 @@ def merge(cost_rows, store_rows):
             "추정평수": round(pyeong, 1),
             "추정월영업이익_만원": round(month_profit / 10),
             "회수개월_추정": round(payback, 1),
+            # 기타(인테리어·설비)가 사실상 0이면 창업비 공시가 불완전하다는 신호
+            "창업비공시": "불완전" if to_int(c.get("jngBzmnEtcAmt")) / 10 < 1000 else "정상",
         })
 
     return merged
@@ -309,6 +314,7 @@ def main():
     picks = [
         m for m in result
         if m["추정월영업이익_만원"] * 10 >= MIN_MONTH_PROFIT
+        and m["  기타_만원"] >= MIN_ETC
         and (m["업종중"] == PICK_MLSFC if PICK_MLSFC else True)
     ]
     # 회수개월은 짧을수록, 그 외 지표는 클수록 좋다
