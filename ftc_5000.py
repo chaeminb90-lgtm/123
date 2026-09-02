@@ -4,8 +4,10 @@
 공정위 가맹정보 오픈API 수집 + 조인 + 창업비 5천만원 이하 필터
 
 사용법:
-  1) 아래 URL_CREATION / URL_STORE 두 줄에 '미리보기' 주소창 URL을 그대로 붙여넣는다
-     (serviceKey 포함된 전체 URL. pageNo/numOfRows는 스크립트가 알아서 덮어씀)
+  1) data.go.kr 인증키를 환경변수로 넣는다 (키는 절대 이 파일에 적지 말 것):
+       export FTC_SERVICE_KEY='발급받은키'
+     또는 같은 폴더에 .ftc_key 파일을 만들고 키만 한 줄 적어둔다.
+     인코딩키(%2F, %3D 포함) / 디코딩키(+, /, =) 둘 다 인식한다.
   2) pip install requests
   3) python3 ftc_5000.py
 
@@ -18,18 +20,21 @@
 """
 
 import csv
+import os
 import sys
 import time
 import xml.etree.ElementTree as ET
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+from urllib.parse import quote, urlencode
 
 import requests
 
 # ============================================================
-# 1. 여기 두 줄만 채우세요 (미리보기 창의 주소 전체)
+# 1. 엔드포인트 (공개 정보라 하드코딩. 인증키만 환경변수)
 # ============================================================
-URL_CREATION = "여기에_창업금액_미리보기_URL_붙여넣기"      # 15110265
-URL_STORE    = "여기에_가맹점현황_미리보기_URL_붙여넣기"    # 15110241
+EP_CREATION = "https://apis.data.go.kr/1130000/FftcBrandFntnStatsService/getBrandFntnStats"          # 브랜드별 창업비용
+EP_STORE    = "https://apis.data.go.kr/1130000/FftcBrandFrcsStatsService/getBrandFrcsStats"          # 브랜드별 가맹점현황
+EP_INDUTY_FRCS = "https://apis.data.go.kr/1130000/FftcBrandIndutyDropFrcsStatsService/getBrandIndutyFrcsStats"  # 업종별 가맹점수 구간
+EP_INDUTY_DROP = "https://apis.data.go.kr/1130000/FftcBrandIndutyDropFrcsStatsService/getBrandIndutyDropStats"  # 업종별 폐점수 구간
 
 YEAR = ""              # "" = 자동탐지(최신연도 우선). "2024"처럼 직접 지정도 가능
 YEAR_CANDIDATES = ["2025", "2024", "2023", "2022", "2021"]  # 앞에서부터 시도
@@ -52,18 +57,35 @@ COST_RATIO = {         # 매출 대비 비용 비율 합계
 DEFAULT_COST_RATIO = 0.78
 
 
-def _split(base_url: str, label: str):
-    """URL을 (parts, params)로 분해. 플레이스홀더면 중단."""
-    if base_url.startswith("여기에"):
-        sys.exit(f"[중단] {label} URL을 먼저 채워주세요.")
-    parts = urlparse(base_url)
-    params = {k: v[0] for k, v in parse_qs(parts.query).items()}
-    return parts, params
+def load_key() -> str:
+    """환경변수 또는 .ftc_key에서 인증키를 읽어 URL에 넣을 수 있는 형태로 반환."""
+    key = os.environ.get("FTC_SERVICE_KEY", "").strip()
+    if not key:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".ftc_key")
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                key = f.read().strip()
+    if not key:
+        sys.exit(
+            "[중단] 인증키가 없습니다.\n"
+            "  export FTC_SERVICE_KEY='발급받은키'   또는   .ftc_key 파일에 키 한 줄"
+        )
+    # '%'가 있으면 이미 인코딩된 키로 보고 그대로, 아니면 인코딩한다.
+    return key if "%" in key else quote(key, safe="")
 
 
-def _request(parts, params, label: str):
+SERVICE_KEY = ""   # main()에서 채움
+
+
+def build_url(endpoint: str, params: dict) -> str:
+    """serviceKey는 이미 인코딩돼 있으므로 재인코딩하지 않고 직접 붙인다."""
+    rest = urlencode({k: v for k, v in params.items() if k != "serviceKey"})
+    return f"{endpoint}?serviceKey={SERVICE_KEY}&{rest}"
+
+
+def _request(endpoint: str, params: dict, label: str):
     """1회 호출 후 XML 루트 반환. 에러면 중단."""
-    url = urlunparse(parts._replace(query=urlencode(params, safe="%")))
+    url = build_url(endpoint, params)
     r = requests.get(url, timeout=60)
     r.raise_for_status()
     try:
@@ -76,26 +98,24 @@ def _request(parts, params, label: str):
     return root
 
 
-def probe_count(base_url: str, year: str, label: str) -> int:
+def probe_count(endpoint: str, year: str, label: str) -> int:
     """해당 연도의 totalCount만 가볍게 조회. 호출 실패는 0으로 처리."""
-    parts, params = _split(base_url, label)
-    params.update({"yr": year, "pageNo": "1", "numOfRows": "1"})
     try:
-        root = _request(parts, params, label)
+        root = _request(endpoint, {"yr": year, "pageNo": "1", "numOfRows": "1"}, label)
     except (requests.RequestException, SystemExit):
         return 0
     return int(root.findtext(".//totalCount") or 0)
 
 
-def detect_year(urls_with_labels) -> str:
+def detect_year(eps_with_labels) -> str:
     """두 데이터셋 모두에 자료가 있는 가장 최신 연도를 찾는다."""
     if YEAR:
         print(f"  연도 고정: {YEAR}")
         return YEAR
     print("  연도 자동탐지 (최신부터)")
     for y in YEAR_CANDIDATES:
-        counts = [probe_count(u, y, lb) for u, lb in urls_with_labels]
-        state = " / ".join(f"{lb} {c:,}건" for (_, lb), c in zip(urls_with_labels, counts))
+        counts = [probe_count(ep, y, lb) for ep, lb in eps_with_labels]
+        state = " / ".join(f"{lb} {c:,}건" for (_, lb), c in zip(eps_with_labels, counts))
         print(f"    {y}: {state}")
         if all(c > 0 for c in counts):
             print(f"  -> {y}년 사용")
@@ -103,16 +123,14 @@ def detect_year(urls_with_labels) -> str:
     sys.exit(f"[중단] {YEAR_CANDIDATES} 중 두 데이터셋이 모두 있는 연도가 없습니다.")
 
 
-def fetch_all(base_url: str, label: str, year: str):
-    """미리보기 URL을 받아 전 페이지를 순회하며 dict 리스트로 반환."""
-    parts, params = _split(base_url, label)
-    params["numOfRows"] = str(ROWS_PER_PAGE)
-    params["yr"] = year
+def fetch_all(endpoint: str, label: str, year: str):
+    """전 페이지를 순회하며 dict 리스트로 반환."""
+    params = {"yr": year, "numOfRows": str(ROWS_PER_PAGE)}
 
     rows, page, total = [], 1, None
     while True:
         params["pageNo"] = str(page)
-        root = _request(parts, params, label)
+        root = _request(endpoint, params, label)
 
         if total is None:
             total = int(root.findtext(".//totalCount") or 0)
@@ -157,10 +175,21 @@ def write_csv(rows, path):
 
 
 def main():
+    global SERVICE_KEY
+    SERVICE_KEY = load_key()
+
     print("[1/3] 수집")
-    year = detect_year([(URL_CREATION, "창업금액"), (URL_STORE, "가맹점현황")])
-    cost_rows = fetch_all(URL_CREATION, "창업금액", year)
-    store_rows = fetch_all(URL_STORE, "가맹점현황", year)
+    year = detect_year([(EP_CREATION, "창업금액"), (EP_STORE, "가맹점현황")])
+    cost_rows = fetch_all(EP_CREATION, "창업금액", year)
+    store_rows = fetch_all(EP_STORE, "가맹점현황", year)
+
+    # 업종별 집계 2종은 조인에 쓰지 않고 참고용으로 그대로 저장
+    for ep, lb, fn in [(EP_INDUTY_FRCS, "업종별가맹점수", "ftc_업종별_가맹점수구간"),
+                       (EP_INDUTY_DROP, "업종별폐점수", "ftc_업종별_폐점수구간")]:
+        try:
+            write_csv(fetch_all(ep, lb, year), f"{fn}_{year}.csv")
+        except (requests.RequestException, SystemExit) as e:
+            print(f"  [건너뜀] {lb}: {e}")
 
     write_csv(cost_rows, f"ftc_창업금액_원본_{year}.csv")
     write_csv(store_rows, f"ftc_가맹점현황_원본_{year}.csv")
