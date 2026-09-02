@@ -48,6 +48,13 @@ MIN_STORES = 30        # 최소 가맹점 수. 검증 안 된 신생 브랜드 �
 MAX_CLOSE_RATE = 0.15  # 폐점률 상한 (15%)
 REQUIRE_SALES = True   # 평균매출 미공시(0) 브랜드 제외. False로 두면 회수개월이 0으로 찍혀 오해 유발
 
+# ---- 추천 5개 뽑기 조건 ----
+MIN_MONTH_PROFIT = 5000   # 추정 월영업이익 하한 (천원). 5000 = 500만원
+#   주의: 외식 비용률 75% 가정이므로 월 500만원 = 월매출 2,000만원(연 2.4억) 이상이라는 뜻
+PICK_MLSFC = "한식"       # 업종중분류. "" 로 두면 업종 제한 없음
+PICK_TOP_N = 5            # 몇 개 뽑을지
+PICK_SORT = "회수개월_추정"  # 정렬 기준. "추정월영업이익_만원"으로 바꾸면 순이익 큰 순
+
 # 추정 영업이익 가정 — 화면에 반드시 같이 표기할 것
 COST_RATIO = {         # 매출 대비 비용 비율 합계
     "외식":   0.75,    # 원재료38 + 임차10 + 인건20 + 로열티·기타7 → 영업이익률 약 25%
@@ -266,6 +273,44 @@ def main():
     for m in result[:20]:
         print(f"  {m['창업비용_만원']:>6,}만원 | 점포 {m['가맹점수']:>4} | 폐점 {m['폐점률']:>4.1f}% | "
               f"월매출 {m['월매출_만원']:>6,}만원 | {m['브랜드']}")
+
+    # ------------------------------------------------------------
+    # 추천 N개: 순이익 하한 + 업종중분류 조건 추가
+    # ------------------------------------------------------------
+    picks = [
+        m for m in result
+        if m["추정월영업이익_만원"] * 10 >= MIN_MONTH_PROFIT
+        and (m["업종중"] == PICK_MLSFC if PICK_MLSFC else True)
+    ]
+    # 회수개월은 짧을수록, 그 외 지표는 클수록 좋다
+    picks.sort(key=lambda x: x[PICK_SORT], reverse=(PICK_SORT != "회수개월_추정"))
+    picks = picks[:PICK_TOP_N]
+
+    label = f"{PICK_MLSFC} " if PICK_MLSFC else ""
+    print("\n" + "=" * 62)
+    print(f"추천 {label}브랜드 {len(picks)}개"
+          f"  (창업비 {MAX_COST//10:,}만원 미만 · 추정 월순익 {MIN_MONTH_PROFIT//10:,}만원 이상)")
+    print(f"정렬: {PICK_SORT}")
+    print("=" * 62)
+
+    if not picks:
+        print("조건을 만족하는 브랜드가 없습니다. MIN_STORES나 MIN_MONTH_PROFIT을 낮춰보세요.")
+    for i, m in enumerate(picks, 1):
+        print(f"\n[{i}] {m['브랜드']}")
+        for k, v in m.items():
+            if k == "브랜드":
+                continue
+            key = k.strip()
+            mark = "   └ " if k.startswith("  ") else " "
+            print(f"{mark}{key:<14}: {v:,}" if isinstance(v, (int, float)) else f"{mark}{key:<14}: {v}")
+
+    write_csv(picks, f"ftc_추천_{PICK_MLSFC or '전체'}_{year}.csv")
+
+    print("\n" + "-" * 62)
+    print("추정월영업이익 = 월매출 x (1 - 업종별 비용률). 공정위 데이터에 영업이익은 없습니다.")
+    print(f"적용 비용률: 외식 {COST_RATIO['외식']:.0%} / 도소매 {COST_RATIO['도소매']:.0%} "
+          f"/ 서비스 {COST_RATIO['서비스']:.0%} (그 외 {DEFAULT_COST_RATIO:.0%})")
+    print("점포별 임차료·인건비 편차가 커서 실제 수익은 브랜드가 아니라 입지가 좌우합니다.")
 
 
 if __name__ == "__main__":
