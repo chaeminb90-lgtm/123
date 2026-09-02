@@ -26,6 +26,48 @@ from ftc_5000 import merge
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# 업종중분류별 평당 월매출 중앙값. 같은 업종 안에서의 상대 위치를 보기 위한 기준값.
+_MEDIAN_CACHE = {}
+
+
+def category_medians(rows):
+    """업종중분류별 평당 월매출 중앙값을 계산해 캐시."""
+    if _MEDIAN_CACHE:
+        return _MEDIAN_CACHE
+    buckets = {}
+    for r in rows:
+        if r["추정평수"] > 0 and r["월매출_만원"] > 0:
+            buckets.setdefault(r["업종중"], []).append(r["월매출_만원"] / r["추정평수"])
+    for k, v in buckets.items():
+        v.sort()
+        _MEDIAN_CACHE[k] = v[len(v) // 2]
+    return _MEDIAN_CACHE
+
+
+def estimate_delivery_share(r, medians):
+    """배달 매출 비중을 추정해 (비중%, 근거) 반환.
+
+    공정위 공시에 배달/홀 구분 필드는 없다. 두 가지 간접 신호만 쓴다.
+      - 10평 미만: 홀 영업이 물리적으로 불가능하므로 배달·포장 전문
+      - 같은 업종 중앙값 대비 평당매출 배수: 홀 좌석만으로 설명되지 않는 초과분
+
+    업종 '간' 비교로는 쓸 수 없다. 치킨(89만/평)이 일식(131만/평)보다 낮게 나오므로
+    평당매출의 절대 수준은 배달 비중을 뜻하지 않는다. 어디까지나 추정이다.
+    """
+    if r["추정평수"] <= 0 or r["월매출_만원"] <= 0:
+        return 30.0, "평수 미상 — 기본값"
+    if r["추정평수"] < 10:
+        return 90.0, f"{r['추정평수']:g}평 — 홀 영업 불가"
+    med = medians.get(r["업종중"], 0)
+    if not med:
+        return 30.0, "업종 기준값 없음 — 기본값"
+    x = (r["월매출_만원"] / r["추정평수"]) / med
+    if x >= 3:
+        return 70.0, f"{r['업종중']} 중앙값의 {x:.1f}배 — 홀만으로 설명 안 됨"
+    if x >= 2:
+        return 50.0, f"{r['업종중']} 중앙값의 {x:.1f}배 — 다소 높음"
+    return 30.0, f"{r['업종중']} 중앙값의 {x:.1f}배 — 평범"
+
 
 def load(year):
     def read(name):
@@ -51,13 +93,18 @@ def pnl(r, a):
         rent = sales * a.rent_fallback / 100
         rent_note = f"평수 미상 -> 매출 {a.rent_fallback:g}% 대체"
     depr = r["  기타_만원"] / a.depreciation_months
+    if a.delivery_share == "auto":
+        dshare, dnote = estimate_delivery_share(r, a._medians)
+    else:
+        dshare, dnote = float(a.delivery_share), "직접 지정"
+
     items = [
         ("월매출 (공시)",        sales,                                        "공정위 공시"),
         ("식자재비",             -sales * a.food_cost / 100,                   f"매출 {a.food_cost:g}%"),
         ("인건비",               -sales * a.labor / 100,                       f"매출 {a.labor:g}%"),
         ("임차료",               -rent,                                        rent_note),
-        ("배달 수수료",          -sales * a.delivery_share / 100 * a.delivery_fee / 100,
-                                 f"배달비중 {a.delivery_share:g}% x 수수료 {a.delivery_fee:g}%"),
+        ("배달 수수료",          -sales * dshare / 100 * a.delivery_fee / 100,
+                                 f"배달비중 {dshare:g}% ({dnote}) x 수수료 {a.delivery_fee:g}%"),
         ("카드 수수료",          -sales * a.card_fee / 100,                    f"매출 {a.card_fee:g}%"),
         ("로열티·광고분담금",    -sales * a.royalty / 100,                     f"매출 {a.royalty:g}%"),
         ("공과금·소모품",        -sales * a.utility / 100,                     f"매출 {a.utility:g}%"),
@@ -103,7 +150,9 @@ def main():
     p.add_argument("--rent-per-pyeong", type=float, default=20, help="평당 월임차료 만원 (기본 20)")
     p.add_argument("--rent-fallback", type=float, default=10,
                    help="평수를 못 구할 때 임차료를 매출의 몇 %%로 볼지 (기본 10)")
-    p.add_argument("--delivery-share", type=float, default=30, help="배달 매출 비중 %% (기본 30)")
+    p.add_argument("--delivery-share", default="auto",
+                   help="배달 매출 비중 %%. 기본 auto = 평수와 업종 내 평당매출로 추정. "
+                        "숫자를 주면 전 브랜드에 그 값을 적용")
     p.add_argument("--delivery-fee", type=float, default=13, help="배달 수수료율 %% (기본 13)")
     p.add_argument("--card-fee", type=float, default=2, help="카드 수수료 %% (기본 2)")
     p.add_argument("--royalty", type=float, default=3, help="로열티·광고 %% (기본 3)")
@@ -112,6 +161,7 @@ def main():
     a = p.parse_args()
 
     rows = load(a.year)
+    a._medians = category_medians(rows)
     if a.brand:
         hit = [r for r in rows if a.brand in r["브랜드"]]
         if not hit:
