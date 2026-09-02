@@ -221,6 +221,7 @@ def merge(cost_rows, store_rows):
 
         cost = to_int(c.get("smtnAmt"))
         stores = to_int(s.get("frcsCnt"))
+        new_stores = to_int(s.get("newFrcsRgsCnt"))
         ended = to_int(s.get("ctrtEndCnt")) + to_int(s.get("ctrtCncltnCnt"))
         sales_yr = to_int(s.get("avrgSlsAmt"))
         sales_ar = to_int(s.get("arUnitAvrgSlsAmt"))
@@ -247,6 +248,9 @@ def merge(cost_rows, store_rows):
             "  보증금_만원": round(to_int(c.get("jngBzmnAssrncAmt")) / 10),
             "  기타_만원": round(to_int(c.get("jngBzmnEtcAmt")) / 10),
             "가맹점수": stores,
+            "신규점포수": new_stores,
+            # 신규 비중이 높으면 '아직 폐점할 시간이 없었을' 뿐이라 폐점률이 무의미하다
+            "신규비율": round(new_stores / stores * 100, 1) if stores else 0.0,
             "계약종료해지": ended,
             "폐점률": round(close_rate * 100, 1),
             "연매출_만원": round(sales_yr / 10),
@@ -256,6 +260,7 @@ def merge(cost_rows, store_rows):
             "회수개월_추정": round(payback, 1),
             # 기타(인테리어·설비)가 사실상 0이면 창업비 공시가 불완전하다는 신호
             "창업비공시": "불완전" if to_int(c.get("jngBzmnEtcAmt")) / 10 < 1000 else "정상",
+            "폐점률신뢰도": "낮음(신생)" if stores and new_stores / stores >= 0.8 else "보통",
         })
 
     return merged

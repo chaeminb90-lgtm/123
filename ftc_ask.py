@@ -67,6 +67,9 @@ def main():
                    help="기타(인테리어·설비) 최소액(만원). 기본 1000. "
                         "이하는 창업비 공시가 불완전해 회수개월이 왜곡됨. 0이면 필터 해제")
     p.add_argument("--list-mlsfc", action="store_true", help="업종중분류 목록만 출력")
+    p.add_argument("--max-new-ratio", type=float, default=100.0,
+                   help="신규점포 비율 상한(%%). 80 이하로 주면 신생 브랜드 제외. "
+                        "신규비율이 높으면 폐점률 0%%가 실력이 아니라 업력 부족 탓임")
     p.add_argument("--stats", action="store_true",
                    help="기타(인테리어·설비) 공시 분포만 출력. 임계값 정하는 근거로 사용")
     a = p.parse_args()
@@ -127,6 +130,7 @@ def main():
         and r["추정월영업이익_만원"] >= a.min_profit
         and r["가맹점수"] >= a.min_stores
         and r["폐점률"] <= a.max_close
+        and r["신규비율"] <= a.max_new_ratio
         and r["연매출_만원"] > 0
         and (r["업종대"] == a.lclas if a.lclas else True)
         and (r["업종중"] == a.mlsfc if a.mlsfc else True)
