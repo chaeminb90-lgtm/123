@@ -67,6 +67,8 @@ def main():
                    help="기타(인테리어·설비) 최소액(만원). 기본 1000. "
                         "이하는 창업비 공시가 불완전해 회수개월이 왜곡됨. 0이면 필터 해제")
     p.add_argument("--list-mlsfc", action="store_true", help="업종중분류 목록만 출력")
+    p.add_argument("--stats", action="store_true",
+                   help="기타(인테리어·설비) 공시 분포만 출력. 임계값 정하는 근거로 사용")
     a = p.parse_args()
 
     year, cost_rows, store_rows = load_year(a.year)
@@ -91,6 +93,32 @@ def main():
                and r["  기타_만원"] < a.min_etc
                and (r["업종대"] == a.lclas if a.lclas else True)
                and (r["업종중"] == a.mlsfc if a.mlsfc else True)]
+
+    if a.stats:
+        base = [r for r in rows
+                if 0 < r["창업비용_만원"] <= a.max_cost
+                and r["가맹점수"] >= a.min_stores
+                and r["폐점률"] <= a.max_close
+                and r["연매출_만원"] > 0
+                and (r["업종대"] == a.lclas if a.lclas else True)
+                and (r["업종중"] == a.mlsfc if a.mlsfc else True)]
+        print(f"창업비 {a.max_cost:,}만원 이하 기본조건 통과 {len(base):,}건의 "
+              f"'기타(인테리어·설비)' 분포")
+        buckets = [(0, 0, "0원 — 인테리어 미공시"), (1, 999, "1~999만원 — 사실상 미공시"),
+                   (1000, 1999, "1,000~1,999만원"), (2000, 2999, "2,000~2,999만원"),
+                   (3000, 10**9, "3,000만원 이상 — 정상 공시")]
+        for lo, hi, name in buckets:
+            grp = [r for r in base if lo <= r["  기타_만원"] <= hi]
+            pct = len(grp) / len(base) * 100 if base else 0
+            bar = "#" * int(pct / 2)
+            print(f"  {name:<26} {len(grp):>4}건 ({pct:>5.1f}%) {bar}")
+        share = [r["  기타_만원"] / r["창업비용_만원"] for r in base if r["창업비용_만원"]]
+        if share:
+            share.sort()
+            mid = share[len(share) // 2]
+            print(f"\n  창업비 중 기타 비중 중앙값: {mid:.0%}")
+            print("  정상 공시 브랜드는 보통 50~75%가 인테리어·설비입니다.")
+        return
 
     picks = [
         r for r in rows
