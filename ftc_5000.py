@@ -181,27 +181,8 @@ def write_csv(rows, path):
     print(f"  -> {path}")
 
 
-def main():
-    global SERVICE_KEY
-    SERVICE_KEY = load_key()
-
-    print("[1/3] 수집")
-    year = detect_year([(EP_CREATION, "창업금액"), (EP_STORE, "가맹점현황")])
-    cost_rows = fetch_all(EP_CREATION, "창업금액", year)
-    store_rows = fetch_all(EP_STORE, "가맹점현황", year)
-
-    # 업종별 집계 2종은 조인에 쓰지 않고 참고용으로 그대로 저장
-    for ep, lb, fn in [(EP_INDUTY_FRCS, "업종별가맹점수", "ftc_업종별_가맹점수구간"),
-                       (EP_INDUTY_DROP, "업종별폐점수", "ftc_업종별_폐점수구간")]:
-        try:
-            write_csv(fetch_all(ep, lb, year), f"{fn}_{year}.csv")
-        except (requests.RequestException, SystemExit) as e:
-            print(f"  [건너뜀] {lb}: {e}")
-
-    write_csv(cost_rows, f"ftc_창업금액_원본_{year}.csv")
-    write_csv(store_rows, f"ftc_가맹점현황_원본_{year}.csv")
-
-    print("[2/3] 조인")
+def merge(cost_rows, store_rows):
+    """창업금액 + 가맹점현황을 (브랜드명, 상호명)으로 조인하고 파생지표를 계산한다."""
     # 브랜드명 + 상호명으로 매칭 (동명 브랜드 충돌 방지)
     store_idx = {}
     for s in store_rows:
@@ -249,6 +230,32 @@ def main():
             "추정월영업이익_만원": round(month_profit / 10),
             "회수개월_추정": round(payback, 1),
         })
+
+    return merged
+
+
+def main():
+    global SERVICE_KEY
+    SERVICE_KEY = load_key()
+
+    print("[1/3] 수집")
+    year = detect_year([(EP_CREATION, "창업금액"), (EP_STORE, "가맹점현황")])
+    cost_rows = fetch_all(EP_CREATION, "창업금액", year)
+    store_rows = fetch_all(EP_STORE, "가맹점현황", year)
+
+    # 업종별 집계 2종은 조인에 쓰지 않고 참고용으로 그대로 저장
+    for ep, lb, fn in [(EP_INDUTY_FRCS, "업종별가맹점수", "ftc_업종별_가맹점수구간"),
+                       (EP_INDUTY_DROP, "업종별폐점수", "ftc_업종별_폐점수구간")]:
+        try:
+            write_csv(fetch_all(ep, lb, year), f"{fn}_{year}.csv")
+        except (requests.RequestException, SystemExit) as e:
+            print(f"  [건너뜀] {lb}: {e}")
+
+    write_csv(cost_rows, f"ftc_창업금액_원본_{year}.csv")
+    write_csv(store_rows, f"ftc_가맹점현황_원본_{year}.csv")
+
+    print("[2/3] 조인")
+    merged = merge(cost_rows, store_rows)
 
     print("[3/3] 필터")
     result = [
