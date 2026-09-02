@@ -10,9 +10,11 @@
   3) python3 ftc_5000.py
 
 출력:
-  ftc_창업금액_원본.csv
-  ftc_가맹점현황_원본.csv
-  ftc_5천이하_결과.csv   <- 이걸 보면 됨
+  ftc_창업금액_원본_<연도>.csv
+  ftc_가맹점현황_원본_<연도>.csv
+  ftc_5천이하_결과_<연도>.csv   <- 이걸 보면 됨
+
+연도는 YEAR=""면 2025→2024→... 순으로 자동탐지한다.
 """
 
 import csv
@@ -29,7 +31,8 @@ import requests
 URL_CREATION = "여기에_창업금액_미리보기_URL_붙여넣기"      # 15110265
 URL_STORE    = "여기에_가맹점현황_미리보기_URL_붙여넣기"    # 15110241
 
-YEAR = "2021"          # 통하는 최신 연도로 바꾸세요 (2022~2025 시도)
+YEAR = ""              # "" = 자동탐지(최신연도 우선). "2024"처럼 직접 지정도 가능
+YEAR_CANDIDATES = ["2025", "2024", "2023", "2022", "2021"]  # 앞에서부터 시도
 ROWS_PER_PAGE = 1000   # 너무 크면 거부하는 경우 있음. 실패하면 500 → 100 순으로 낮추기
 
 # ============================================================
@@ -38,6 +41,7 @@ ROWS_PER_PAGE = 1000   # 너무 크면 거부하는 경우 있음. 실패하면 
 MAX_COST = 50000       # 창업비용 상한 (천원). 50000 = 5,000만원
 MIN_STORES = 30        # 최소 가맹점 수. 검증 안 된 신생 브랜드 제외
 MAX_CLOSE_RATE = 0.15  # 폐점률 상한 (15%)
+REQUIRE_SALES = True   # 평균매출 미공시(0) 브랜드 제외. False로 두면 회수개월이 0으로 찍혀 오해 유발
 
 # 추정 영업이익 가정 — 화면에 반드시 같이 표기할 것
 COST_RATIO = {         # 매출 대비 비용 비율 합계
@@ -48,32 +52,67 @@ COST_RATIO = {         # 매출 대비 비용 비율 합계
 DEFAULT_COST_RATIO = 0.78
 
 
-def fetch_all(base_url: str, label: str):
-    """미리보기 URL을 받아 전 페이지를 순회하며 dict 리스트로 반환."""
+def _split(base_url: str, label: str):
+    """URL을 (parts, params)로 분해. 플레이스홀더면 중단."""
     if base_url.startswith("여기에"):
         sys.exit(f"[중단] {label} URL을 먼저 채워주세요.")
-
     parts = urlparse(base_url)
     params = {k: v[0] for k, v in parse_qs(parts.query).items()}
+    return parts, params
+
+
+def _request(parts, params, label: str):
+    """1회 호출 후 XML 루트 반환. 에러면 중단."""
+    url = urlunparse(parts._replace(query=urlencode(params, safe="%")))
+    r = requests.get(url, timeout=60)
+    r.raise_for_status()
+    try:
+        root = ET.fromstring(r.text)
+    except ET.ParseError:
+        sys.exit(f"[중단] {label} 응답이 XML이 아닙니다. 앞부분:\n{r.text[:400]}")
+    code = root.findtext(".//resultCode")
+    if code not in (None, "00"):
+        sys.exit(f"[중단] {label} 에러 {code}: {root.findtext('.//resultMsg')}")
+    return root
+
+
+def probe_count(base_url: str, year: str, label: str) -> int:
+    """해당 연도의 totalCount만 가볍게 조회. 호출 실패는 0으로 처리."""
+    parts, params = _split(base_url, label)
+    params.update({"yr": year, "pageNo": "1", "numOfRows": "1"})
+    try:
+        root = _request(parts, params, label)
+    except (requests.RequestException, SystemExit):
+        return 0
+    return int(root.findtext(".//totalCount") or 0)
+
+
+def detect_year(urls_with_labels) -> str:
+    """두 데이터셋 모두에 자료가 있는 가장 최신 연도를 찾는다."""
+    if YEAR:
+        print(f"  연도 고정: {YEAR}")
+        return YEAR
+    print("  연도 자동탐지 (최신부터)")
+    for y in YEAR_CANDIDATES:
+        counts = [probe_count(u, y, lb) for u, lb in urls_with_labels]
+        state = " / ".join(f"{lb} {c:,}건" for (_, lb), c in zip(urls_with_labels, counts))
+        print(f"    {y}: {state}")
+        if all(c > 0 for c in counts):
+            print(f"  -> {y}년 사용")
+            return y
+    sys.exit(f"[중단] {YEAR_CANDIDATES} 중 두 데이터셋이 모두 있는 연도가 없습니다.")
+
+
+def fetch_all(base_url: str, label: str, year: str):
+    """미리보기 URL을 받아 전 페이지를 순회하며 dict 리스트로 반환."""
+    parts, params = _split(base_url, label)
     params["numOfRows"] = str(ROWS_PER_PAGE)
-    if "yr" in params:
-        params["yr"] = YEAR
+    params["yr"] = year
 
     rows, page, total = [], 1, None
     while True:
         params["pageNo"] = str(page)
-        url = urlunparse(parts._replace(query=urlencode(params, safe="%")))
-        r = requests.get(url, timeout=60)
-        r.raise_for_status()
-
-        try:
-            root = ET.fromstring(r.text)
-        except ET.ParseError:
-            sys.exit(f"[중단] {label} 응답이 XML이 아닙니다. 앞부분:\n{r.text[:400]}")
-
-        code = root.findtext(".//resultCode")
-        if code not in (None, "00"):
-            sys.exit(f"[중단] {label} 에러 {code}: {root.findtext('.//resultMsg')}")
+        root = _request(parts, params, label)
 
         if total is None:
             total = int(root.findtext(".//totalCount") or 0)
@@ -119,11 +158,12 @@ def write_csv(rows, path):
 
 def main():
     print("[1/3] 수집")
-    cost_rows = fetch_all(URL_CREATION, "창업금액")
-    store_rows = fetch_all(URL_STORE, "가맹점현황")
+    year = detect_year([(URL_CREATION, "창업금액"), (URL_STORE, "가맹점현황")])
+    cost_rows = fetch_all(URL_CREATION, "창업금액", year)
+    store_rows = fetch_all(URL_STORE, "가맹점현황", year)
 
-    write_csv(cost_rows, "ftc_창업금액_원본.csv")
-    write_csv(store_rows, "ftc_가맹점현황_원본.csv")
+    write_csv(cost_rows, f"ftc_창업금액_원본_{year}.csv")
+    write_csv(store_rows, f"ftc_가맹점현황_원본_{year}.csv")
 
     print("[2/3] 조인")
     # 브랜드명 + 상호명으로 매칭 (동명 브랜드 충돌 방지)
@@ -144,7 +184,9 @@ def main():
         sales_ar = to_int(s.get("arUnitAvrgSlsAmt"))
 
         close_rate = ended / (stores + ended) if (stores + ended) else 0.0
-        area_m2 = sales_yr / sales_ar if sales_ar else 0.0
+        # arUnitAvrgSlsAmt는 '면적(3.3㎡)당' 매출이므로 나눈 값이 곧 평수다.
+        # ㎡로 보고 3.3058로 한 번 더 나누면 실제의 1/3.3이 된다.
+        pyeong = sales_yr / sales_ar if sales_ar else 0.0
 
         lclas = c.get("indutyLclasNm", "")
         ratio = COST_RATIO.get(lclas, DEFAULT_COST_RATIO)
@@ -167,7 +209,7 @@ def main():
             "폐점률": round(close_rate * 100, 1),
             "연매출_만원": round(sales_yr / 10),
             "월매출_만원": round(month_sales / 10),
-            "추정평수": round(area_m2 / 3.3058, 1),
+            "추정평수": round(pyeong, 1),
             "추정월영업이익_만원": round(month_profit / 10),
             "회수개월_추정": round(payback, 1),
         })
@@ -178,12 +220,19 @@ def main():
         if 0 < m["창업비용_만원"] * 10 < MAX_COST
         and m["가맹점수"] >= MIN_STORES
         and m["폐점률"] <= MAX_CLOSE_RATE * 100
+        and (m["연매출_만원"] > 0 if REQUIRE_SALES else True)
     ]
     result.sort(key=lambda x: x["창업비용_만원"])
 
-    write_csv(result, "ftc_5천이하_결과.csv")
+    write_csv(result, f"ftc_5천이하_결과_{year}.csv")
     print(f"\n조건 통과: {len(result)}개 / 전체 {len(merged)}개")
-    print(f"조건: 창업비 {MAX_COST//10}만원 미만 · 가맹점 {MIN_STORES}개 이상 · 폐점률 {MAX_CLOSE_RATE*100:.0f}% 이하\n")
+    cond = f"조건: {year}년 · 창업비 {MAX_COST//10}만원 미만 · 가맹점 {MIN_STORES}개 이상 · 폐점률 {MAX_CLOSE_RATE*100:.0f}% 이하"
+    if REQUIRE_SALES:
+        cond += " · 평균매출 공시"
+    print(cond)
+    print("주의: 창업비용은 가맹본부 지급분(가맹금·교육비·보증금·기타) 합계입니다.")
+    print("      점포 임차보증금·권리금은 포함되지 않으므로 실제 소요자금은 이보다 큽니다.")
+    print("      영업이익·회수개월은 업종별 비용률 가정에 따른 추정치입니다.\n")
 
     for m in result[:20]:
         print(f"  {m['창업비용_만원']:>6,}만원 | 점포 {m['가맹점수']:>4} | 폐점 {m['폐점률']:>4.1f}% | "

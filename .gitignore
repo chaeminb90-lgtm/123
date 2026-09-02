@@ -2,6 +2,6 @@ __pycache__/
 *.py[cod]
 
 # ftc_5000.py 실행 산출물
-ftc_창업금액_원본.csv
-ftc_가맹점현황_원본.csv
-ftc_5천이하_결과.csv
+ftc_창업금액_원본_*.csv
+ftc_가맹점현황_원본_*.csv
+ftc_5천이하_결과_*.csv
