@@ -107,10 +107,29 @@ def cmd_brand(key, year, brand):
     text = re.sub(r"<[^>]+>", " ", r.text)
     text = re.sub(r"\s+", " ", text)
     print(f"본문 길이 {len(text):,}자\n")
+
+    # 키워드마다 구간을 뽑되, 겹치는 구간은 하나로 합친다.
+    # 그러지 않으면 한 문단이 키워드 수만큼 반복 출력된다.
+    spans = []
     for w in ROYALTY_WORDS:
         for m in re.finditer(re.escape(w), text):
-            s, e = max(0, m.start()-120), min(len(text), m.end()+220)
-            print(f"[{w}] ...{text[s:e]}...\n")
+            spans.append([max(0, m.start()-120), min(len(text), m.end()+220), {w}])
+    if not spans:
+        print("로열티 관련 단어를 본문에서 찾지 못했습니다.")
+        print("본문 앞부분:", text[:400])
+    else:
+        spans.sort(key=lambda x: x[0])
+        merged = [spans[0]]
+        for st, en, ws in spans[1:]:
+            if st <= merged[-1][1]:
+                merged[-1][1] = max(merged[-1][1], en)
+                merged[-1][2] |= ws
+            else:
+                merged.append([st, en, ws])
+        print(f"로열티 관련 구간 {len(merged)}곳\n")
+        for i, (st, en, ws) in enumerate(merged, 1):
+            print(f"[{i}] ({', '.join(sorted(ws))})")
+            print(f"    ...{text[st:en]}...\n")
     print(f"뷰어로 직접 보기: {VIEWER}?jngIfrmpSn={found}&servicekey=<키>")
 
 
