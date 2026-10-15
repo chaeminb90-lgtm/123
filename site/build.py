@@ -70,7 +70,7 @@ def apply_phone(text, phone):
     digits = re.sub(r'[^0-9+]', '', phone)
     text = text.replace('data-tel=""', f'data-tel="{html.escape(phone)}"')
     call = (f'<div class="hbd-call" data-reveal><a class="hbd-btn hbd-btn--light" href="tel:{digits}">'
-            f'가맹 상담 {html.escape(phone)}</a></div>')
+            f'1:1 미팅 예약 {html.escape(phone)}</a></div>')
     return text.replace('<ul class="hbd-limit"', call + '\n    <ul class="hbd-limit"', 1)
 
 
@@ -193,7 +193,7 @@ def build_preview(mode, out, sha, phone, font_path):
 <label for="pv-area">희망 지역<select id="pv-area" name="area"><option>서울</option><option>경기</option><option>인천</option></select></label>
 <label for="pv-msg">문의 내용<textarea id="pv-msg" name="msg" placeholder="희망 상권, 오픈 희망 시기 등을 적어 주세요."></textarea></label>
 <label class="agree" for="pv-agree"><input type="checkbox" id="pv-agree"> 개인정보 수집·이용에 동의합니다</label>
-<button type="submit">상담 신청하기</button>
+<button type="submit">1:1 미팅 신청하기</button>
 <p class="msg" id="pv-msg-out" hidden>미리보기 화면이라 실제로 접수되지 않아요. 실제 사이트에서는 아임웹 입력폼으로 접수됩니다.</p>
 </form></div>'''
     foot_html = '''<footer class="pv-foot"><div><b>하복당</b><br>바닥글(상호, 대표자, 사업자등록번호, 주소, 연락처)은 지금 아임웹 사이트의 바닥글을 그대로 씁니다.</div></footer>'''

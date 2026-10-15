@@ -35,17 +35,27 @@
     });
   }
 
+  function fmt(n, dec) {
+    var s = n.toFixed(dec).split('.');
+    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return s.join('.');
+  }
+
   function countUp(el) {
-    var end = parseInt(el.getAttribute('data-count'), 10);
-    if (!end || reduce) return;
-    var t0 = null, dur = 1200;
+    if (el.getAttribute('data-counted') || reduce) return;
+    el.setAttribute('data-counted', '1');
+    var end = parseFloat(el.getAttribute('data-count'));
+    var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
+    if (!end) return;
+    var t0 = null, dur = 1400;
     function step(t) {
       if (!t0) t0 = t;
       var p = Math.min((t - t0) / dur, 1);
-      el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+      el.textContent = fmt(end * (1 - Math.pow(1 - p, 3)), dec);
       if (p < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(end, dec);
     }
-    el.textContent = '0';
+    el.textContent = fmt(0, dec);
     requestAnimationFrame(step);
   }
 
@@ -77,9 +87,9 @@
     dock.className = 'hbd-dock';
     dock.setAttribute('role', 'region');
     dock.setAttribute('aria-label', '가맹 상담 바로가기');
-    dock.innerHTML = '<div class="hbd-dock__in"><p class="hbd-dock__txt"><b>하복당 가맹 상담</b> <span class="opt">· 서울·경기·인천 50호점까지만 모집</span></p>' +
+    dock.innerHTML = '<div class="hbd-dock__in"><p class="hbd-dock__txt"><b>하복당 가맹 1:1 미팅</b> <span class="opt">· 서울·경기·인천 50호점까지만 모집</span></p>' +
       (tel ? '<a class="tel" href="tel:' + tel.replace(/[^0-9+]/g, '') + '">' + tel + '</a>' : '') +
-      '<a class="go" href="#hbd-contact">상담 신청</a></div>';
+      '<a class="go" href="#hbd-contact">미팅 신청</a></div>';
     document.body.appendChild(dock);
     var heroOut = false, contactIn = false;
     function sync() { dock.classList.toggle('is-on', heroOut && !contactIn); }
@@ -118,5 +128,15 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
   window.addEventListener('load', init);
-  setTimeout(init, 1500);
+  // 아임웹 코드 위젯은 페이지가 뜬 뒤 AJAX로 내용을 넣는 경우가 있어, 새 .hbd가 생기면 다시 초기화
+  if ('MutationObserver' in window) {
+    var pending = null;
+    var mo = new MutationObserver(function () {
+      if (pending) return;
+      pending = setTimeout(function () { pending = null; if (document.querySelector('.hbd:not([data-hbd-ready])')) init(); }, 120);
+    });
+    var start = function () { if (document.body) mo.observe(document.body, { childList: true, subtree: true }); };
+    if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+    setTimeout(function () { mo.disconnect(); }, 20000);
+  }
 })();
