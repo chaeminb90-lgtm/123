@@ -28,6 +28,9 @@ WIDGET_LIMIT = 1000000  # 아임웹 코드 위젯 최대 글자 수 (아임웹 �
 
 PRETENDARD_CSS = 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css'
 JUA_CSS = 'https://fonts.googleapis.com/css2?family=Jua&display=swap'
+GSAP_JS = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js'
+ST_JS = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js'
+LOCAL_LIB = os.environ.get('HBD_LOCAL_LIB', '/tmp/claude-0/-home-user-123/95f16457-453a-5fac-9901-17b12c6ad84d/scratchpad/lib/package/dist')
 
 
 def read(path):
@@ -94,6 +97,8 @@ def build_dist(sha, phone, inline_css):
     write(os.path.join(DIST, 'imweb', '00-common-head.html'), '\n'.join(head) + '\n')
     write(os.path.join(DIST, 'imweb', '00-common-body.html'),
           '<!-- 하복당 가맹 사이트: 공통 코드 (바디 끝) -->\n'
+          f'<script src="{GSAP_JS}" defer></script>\n'
+          f'<script src="{ST_JS}" defer></script>\n'
           f'<script src="{cdn(sha, "dist/hbd.js")}" defer></script>\n')
 
     report = []
@@ -220,11 +225,17 @@ def build_preview(mode, out, sha, phone, font_path):
     doc_head = ('<title>하복당 가맹 사이트</title>\n'
                 '<meta name="claude:viewport-fit-sides" content="cover">\n'
                 f'{links}\n{fonts}\n<style>{PREVIEW_CSS}\n{css}</style>\n')
+    if mode == 'local':
+        libs = f'<script src="file://{LOCAL_LIB}/gsap.min.js"></script><script src="file://{LOCAL_LIB}/ScrollTrigger.min.js"></script>'
+    else:
+        libs = f'<script src="{GSAP_JS}"></script><script src="{ST_JS}"></script>'
+    if os.environ.get('HBD_NO_GSAP'):
+        libs = ''
     if mode != 'artifact':
         doc_head = '<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n' + doc_head + '</head><body>\n'
-        tail = f'<script>{js}</script>\n{form_js}\n</body></html>\n'
+        tail = f'{libs}\n<script>{js}</script>\n{form_js}\n</body></html>\n'
     else:
-        tail = f'<script>{js}</script>\n{form_js}\n'
+        tail = f'{libs}\n<script>{js}</script>\n{form_js}\n'
     write(out, doc_head + page_body + '\n' + tail)
     print(f'preview ({mode}) -> {out} ({os.path.getsize(out)//1024} KB)')
 
