@@ -73,7 +73,7 @@ def apply_phone(text, phone):
     digits = re.sub(r'[^0-9+]', '', phone)
     text = text.replace('data-tel=""', f'data-tel="{html.escape(phone)}"')
     call = (f'<div class="hbd-call" data-reveal><a class="hbd-btn hbd-btn--light" href="tel:{digits}">'
-            f'1:1 미팅 예약 {html.escape(phone)}</a></div>')
+            f'1:1 미팅 신청 {html.escape(phone)}</a></div>')
     return text.replace('<ul class="hbd-limit"', call + '\n    <ul class="hbd-limit"', 1)
 
 
@@ -140,6 +140,7 @@ body{margin:0;background:#FFF8F0;color:#3A1705;font-family:"Pretendard Variable"
 .pv-form textarea{min-height:110px;resize:vertical}
 .pv-form .agree{display:flex;align-items:center;gap:8px;font-weight:600}
 .pv-form button{min-height:56px;border:0;border-radius:999px;background:#F26A10;color:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer}
+.pv-form .consent{margin:0;padding:12px 14px;border-radius:12px;background:#FFF8F0;font-size:13px;line-height:1.6;color:#7A5642}
 .pv-form .msg{margin:0;font-size:14px;color:#D4520A;font-weight:700}
 .pv-foot{background:#3A1705;color:#E9D3C2;font-size:13px;line-height:1.7;padding:40px max(20px,env(safe-area-inset-left,0px)) 120px}
 .pv-foot div{max-width:1120px;margin:0 auto}
@@ -189,7 +190,7 @@ def build_preview(mode, out, sha, phone, font_path):
     head_html = f'''<header class="pv-head"><div class="pv-head__in">
 <a class="pv-brand" href="#hbd-top"><span class="pv-logo"><img src="{{{{IMG}}}}/logo_white.png" alt=""></span></a>
 <a class="pv-brand" href="#hbd-top">하복당</a>
-<nav class="pv-nav" aria-label="미리보기 메뉴"><a href="#hbd-menu">메뉴</a><a href="#hbd-stores">오픈매장</a><a href="#hbd-process">창업 절차</a><a href="#hbd-faq">FAQ</a><a class="cta" href="#hbd-contact">가맹 문의</a></nav>
+<nav class="pv-nav" aria-label="미리보기 메뉴"><a href="#hbd-menu">메뉴</a><a href="#hbd-stores">오픈 매장</a><a href="#hbd-process">창업 절차</a><a href="#hbd-faq">FAQ</a><a class="cta" href="#hbd-contact">가맹 문의</a></nav>
 </div></header>'''
     form_html = '''<div class="pv-form"><form id="pv-form" novalidate>
 <span class="tag">이 칸은 아임웹 입력폼 위젯 자리입니다 (미리보기)</span>
@@ -197,6 +198,7 @@ def build_preview(mode, out, sha, phone, font_path):
 <label for="pv-tel">연락처<input id="pv-tel" name="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></label>
 <label for="pv-area">희망 지역<select id="pv-area" name="area"><option>서울</option><option>경기</option><option>인천</option></select></label>
 <label for="pv-msg">문의 내용<textarea id="pv-msg" name="msg" placeholder="희망 상권, 오픈 희망 시기 등을 적어 주세요."></textarea></label>
+<p class="consent">수집 목적: 가맹 상담 일정 안내 · 항목: 이름, 연락처, 희망 지역, 문의 내용 · 보유 기간: 상담 종료 후 ○개월 · 동의하지 않을 수 있으며, 동의하지 않으면 상담 신청을 할 수 없습니다.</p>
 <label class="agree" for="pv-agree"><input type="checkbox" id="pv-agree"> 개인정보 수집·이용에 동의합니다</label>
 <button type="submit">1:1 미팅 신청하기</button>
 <p class="msg" id="pv-msg-out" hidden>미리보기 화면이라 실제로 접수되지 않아요. 실제 사이트에서는 아임웹 입력폼으로 접수됩니다.</p>

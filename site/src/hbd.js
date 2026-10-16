@@ -26,22 +26,57 @@
   }
 
   /* 아임웹 고정 헤더 높이 (고정 장면이 헤더 아래에서 멈추도록) */
+  var SKIP = '.hbd, .hbd-dock, .hbd-progress, .hbd-nav';
   function headerOffset() {
     var x = Math.round(window.innerWidth / 2), best = 0;
     [4, 30, 60].forEach(function (y) {
-      var el = document.elementFromPoint(x, y);
-      while (el && el !== document.body && el !== document.documentElement) {
-        if (el.closest && el.closest('.hbd')) break;
-        var pos = window.getComputedStyle(el).position;
-        if (pos === 'fixed' || pos === 'sticky') {
-          var b = el.getBoundingClientRect().bottom;
-          if (b > best && b < 220) best = b;
-          break;
+      var stack = document.elementsFromPoint ? document.elementsFromPoint(x, y) : [document.elementFromPoint(x, y)];
+      for (var k = 0; k < stack.length; k++) {
+        var el = stack[k];
+        if (!el || (el.closest && el.closest(SKIP))) continue;
+        var found = false;
+        while (el && el !== document.body && el !== document.documentElement) {
+          var cs = window.getComputedStyle(el);
+          if (cs.position === 'fixed' || cs.position === 'sticky') {
+            var r = el.getBoundingClientRect();
+            var b = cs.position === 'sticky' ? (parseFloat(cs.top) || 0) + el.offsetHeight : r.bottom;
+            if (b > best && b < 220) best = b;
+            found = true;
+            break;
+          }
+          el = el.parentElement;
         }
-        el = el.parentElement;
+        if (found) break;
       }
     });
-    return Math.round(best);
+    best = Math.round(best);
+    document.documentElement.style.setProperty('--hbd-hdr', best + 'px');
+    return best;
+  }
+
+  /* 화면 높이·헤더·글꼴이 바뀐 뒤 스크롤 장면 위치를 다시 계산 (짧은 시간 안의 여러 요청은 한 번으로) */
+  var refreshTimer = null;
+  function refreshSoon() {
+    if (!window.ScrollTrigger) return;
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(function () { headerOffset(); window.ScrollTrigger.refresh(); }, 120);
+  }
+
+  /* 아임웹 위젯 등장 애니메이션(transform)이 남아 있으면 position:fixed 고정 장면이 깨지므로 조상 요소의 효과를 끔 */
+  function unlockAncestors(root) {
+    var el = root.parentElement;
+    while (el && el !== document.body && el !== document.documentElement) {
+      var cs = window.getComputedStyle(el);
+      if (cs.transform !== 'none' || cs.animationName !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || /transform|filter/.test(cs.willChange)) {
+        el.style.setProperty('animation', 'none', 'important');
+        el.style.setProperty('transform', 'none', 'important');
+        el.style.setProperty('filter', 'none', 'important');
+        el.style.setProperty('perspective', 'none', 'important');
+        el.style.setProperty('will-change', 'auto', 'important');
+        if (cs.opacity !== '1') el.style.setProperty('opacity', '1', 'important');
+      }
+      el = el.parentElement;
+    }
   }
 
   function countUp(el) {
@@ -78,14 +113,15 @@
 
   function initLoader() {
     var el = document.getElementById('hbd-loader');
-    if (!el || el.getAttribute('data-started')) { if (!el) finishLoader(); return; }
+    if (!el) { if (document.querySelector('.hbd')) finishLoader(); return; }
+    if (el.getAttribute('data-started')) return;
     el.setAttribute('data-started', '1');
     var seen = false;
     try { seen = window.sessionStorage.getItem('hbd-loader-seen') === '1'; } catch (e) { seen = false; }
-    if (seen || reduce) { el.classList.add('is-gone'); finishLoader(); return; }
+    if (seen || reduce) { el.classList.add('is-gone'); finishLoader(); refreshSoon(); return; }
     try { window.sessionStorage.setItem('hbd-loader-seen', '1'); } catch (e) { /* 저장소를 못 써도 진행 */ }
     var pct = el.querySelector('.hbd-loader__pct b');
-    var start = Date.now(), minT = 2000, maxT = 4800;
+    var start = Date.now(), minT = 1400, maxT = 3200;
     var loaded = document.readyState === 'complete';
     window.addEventListener('load', function () { loaded = true; });
     var shown = 0;
@@ -100,7 +136,7 @@
         if (pct) pct.textContent = '100';
         el.classList.add('is-out');
         setTimeout(finishLoader, 380);
-        setTimeout(function () { el.classList.add('is-gone'); }, 1000);
+        setTimeout(function () { el.classList.add('is-gone'); refreshSoon(); }, 1000);
         return;
       }
       requestAnimationFrame(tick);
@@ -123,7 +159,7 @@
             window.gsap.from(p.querySelectorAll('.hbd-card, .hbd-split > *, .hbd-chips li'), { y: 40, opacity: 0, duration: .6, stagger: .06, ease: 'power3.out', clearProps: 'transform,opacity' });
           }
         });
-        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+        refreshSoon();
       }
       each(btns, function (b, i) {
         b.addEventListener('click', function () { select(b, true); });
@@ -168,13 +204,14 @@
   /* ---------------- 카드 기울이기 ---------------- */
   function initTilt(root) {
     if (!finePointer || reduce) return;
-    each($$('.hbd-tilt', root), function (el) {
-      el.addEventListener('mousemove', function (e) {
+    each($$('.hbd-tilt', root), function (fig) {
+      var el = fig.querySelector('img') || fig;
+      fig.addEventListener('mousemove', function (e) {
         var r = el.getBoundingClientRect();
         var x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
         el.style.transform = 'perspective(900px) rotateY(' + (x * 12) + 'deg) rotateX(' + (-y * 12) + 'deg) translateY(-6px)';
       });
-      el.addEventListener('mouseleave', function () { el.style.transform = ''; });
+      fig.addEventListener('mouseleave', function () { el.style.transform = ''; });
     });
   }
 
@@ -240,8 +277,7 @@
       ST.create({ trigger: el, start: 'top 92%', once: true, onEnter: function () { countUp(el); } });
     });
     each($$('[data-pop]', root), function (el) {
-      gsap.from(el, { scale: 0, rotate: -25, duration: 1.1, ease: 'elastic.out(1,.5)', scrollTrigger: { trigger: el, start: 'top 88%' },
-        onComplete: function () { gsap.to(el, { rotate: '+=5', y: -4, duration: 1.3, yoyo: true, repeat: -1, ease: 'sine.inOut' }); } });
+      gsap.from(el, { scale: 0, rotate: -25, duration: 1.1, ease: 'elastic.out(1,.5)', scrollTrigger: { trigger: el, start: 'top 88%' } });
     });
     each($$('[data-parallax]', root), function (img) {
       gsap.fromTo(img, { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: img.parentNode, start: 'top bottom', end: 'bottom top', scrub: true } });
@@ -283,7 +319,7 @@
       var cards = root.querySelectorAll('.hbd-small__cards > li');
       var tl2 = gsap.timeline({ scrollTrigger: { trigger: root, start: function () { return 'top ' + hdr() + 'px'; }, end: '+=110%', pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true,
         onEnter: function () { each(root.querySelectorAll('[data-count]'), countUp); } } });
-      tl2.fromTo(bg, { scale: 1.35 }, { scale: 1, ease: 'none' }, 0)
+      tl2.fromTo(bg, { scale: 1.12 }, { scale: 1, ease: 'none' }, 0)
         .fromTo(cards, { y: 220, opacity: 0, rotate: function (i) { return (i - 1) * 6; } }, { y: 0, opacity: 1, rotate: 0, stagger: .18, ease: 'power2.out' }, .05);
     }
 
@@ -329,7 +365,7 @@
       var bar = root.querySelector('.hbd-timeline__bar i');
       var tlx = root.querySelector('.hbd-timeline');
       gsap.fromTo(bar, narrow ? { scaleY: 0 } : { scaleX: 0 }, { scaleX: 1, scaleY: 1, ease: 'none', scrollTrigger: { trigger: tlx, start: 'top 75%', end: 'bottom 50%', scrub: true } });
-      gsap.from(tlx.querySelectorAll('li'), { scale: .5, opacity: 0, stagger: .15, duration: .7, ease: 'back.out(2)', scrollTrigger: { trigger: tlx, start: 'top 75%' } });
+      gsap.from(tlx.querySelectorAll('li'), { y: 16, opacity: 0, stagger: .08, duration: .5, ease: 'power3.out', scrollTrigger: { trigger: tlx, start: 'top 88%' } });
     }
 
     /* 신메뉴: 화면에 고정된 채 포스터가 가로로 지나감 */
@@ -340,8 +376,8 @@
       var tween = gsap.to(track, { x: function () { return -dist(); }, ease: 'none',
         scrollTrigger: { trigger: pinEl, start: function () { return 'top ' + hdr() + 'px'; }, end: function () { return '+=' + dist(); }, pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true } });
       each(track.querySelectorAll('li'), function (li) {
-        gsap.fromTo(li, { rotateY: -32, scale: .82, opacity: .55 }, { rotateY: 0, scale: 1, opacity: 1, ease: 'none',
-          scrollTrigger: { trigger: li, containerAnimation: tween, start: 'left 98%', end: 'center 55%', scrub: true } });
+        gsap.fromTo(li, { rotateY: -24, scale: .88, opacity: .7 }, { rotateY: 0, scale: 1, opacity: 1, ease: 'none',
+          scrollTrigger: { trigger: li, containerAnimation: tween, start: 'left 98%', end: 'left 75%', scrub: true } });
       });
     }
 
@@ -354,20 +390,20 @@
     if (root.id === 'hbd-marketing') {
       var stage = root.querySelector('.hbd-mkt__stage');
       var posters = root.querySelectorAll('.hbd-mkt__posters img');
-      var tl3 = gsap.timeline({ scrollTrigger: { trigger: stage, start: function () { return 'top ' + hdr() + 'px'; }, end: '+=130%', pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true } });
+      var tl3 = gsap.timeline({ scrollTrigger: { trigger: stage, start: function () { return 'top ' + hdr() + 'px'; }, end: '+=90%', pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true } });
       each(posters, function (p, i) {
         var vh = window.innerHeight;
-        tl3.fromTo(p, { y: vh * (0.75 + (i % 3) * 0.2), rotate: (i % 2 ? 14 : -14), scale: .8 },
+        tl3.fromTo(p, { y: vh * (0.3 + (i % 3) * 0.2), rotate: (i % 2 ? 14 : -14), scale: .8 },
           { y: -vh * (0.65 + (i % 4) * 0.15), rotate: (i % 2 ? -10 : 10), scale: 1.05, ease: 'none' }, (i % 4) * 0.06);
       });
-      tl3.fromTo(root.querySelector('.hbd-mkt__in'), { scale: .85, opacity: 0 }, { scale: 1, opacity: 1, ease: 'power2.out', duration: .25 }, 0);
+      tl3.fromTo(root.querySelector('.hbd-mkt__in'), { y: 40 }, { y: 0, ease: 'none', duration: .3 }, 0);
     }
 
     /* 운영 구조: 카드가 위로 겹쳐 쌓임 */
     if (root.id === 'hbd-operation') {
       var ops = root.querySelectorAll('.hbd-ops > li');
       if (ops.length > 1) {
-        var tl4 = gsap.timeline({ scrollTrigger: { trigger: root, start: function () { return 'top ' + hdr() + 'px'; }, end: '+=' + (ops.length - 1) * 85 + '%', pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true } });
+        var tl4 = gsap.timeline({ scrollTrigger: { trigger: root, start: function () { return 'top ' + hdr() + 'px'; }, end: '+=' + (ops.length - 1) * 60 + '%', pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true } });
         each(ops, function (li, i) {
           if (i === 0) return;
           tl4.fromTo(li, { yPercent: 160, rotate: 5 }, { yPercent: i * 6, rotate: 0, ease: 'power2.out' }, i - 1)
@@ -421,7 +457,7 @@
     dock.className = 'hbd-dock';
     dock.setAttribute('role', 'region');
     dock.setAttribute('aria-label', '가맹 상담 바로가기');
-    dock.innerHTML = '<div class="hbd-dock__in"><p class="hbd-dock__txt"><b>하복당 가맹 1:1 미팅</b> <span class="opt">· 서울·경기·인천 50호점까지만 모집</span></p>' +
+    dock.innerHTML = '<div class="hbd-dock__in"><p class="hbd-dock__txt"><b>하복당 가맹 1:1 미팅</b> <span class="opt">| 서울·경기·인천 50호점까지만 모집</span></p>' +
       (tel ? '<a class="tel" href="tel:' + tel.replace(/[^0-9+]/g, '') + '">' + tel + '</a>' : '') +
       '<a class="go" href="#hbd-contact">미팅 신청</a></div>';
     document.body.appendChild(dock);
@@ -507,6 +543,7 @@
     each(roots, function (root) {
       root.setAttribute('data-hbd-ready', '');
       root.classList.add('hbd-js');
+      try { unlockAncestors(root); } catch (e) { /* 계속 진행 */ }
       try {
         initTabs(root);
         initSliders(root);
@@ -524,7 +561,9 @@
     initDock();
     initChrome();
     if (!anchorsDone) { initAnchors(); anchorsDone = true; }
-    if (window.ScrollTrigger) setTimeout(function () { window.ScrollTrigger.refresh(); }, 60);
+    headerOffset();
+    refreshSoon();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshSoon);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
@@ -532,7 +571,8 @@
     init();
     if (window.ScrollTrigger) window.ScrollTrigger.refresh();
   });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (window.ScrollTrigger) window.ScrollTrigger.refresh(); });
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', refreshSoon);
+  window.addEventListener('resize', function () { headerOffset(); });
   if ('MutationObserver' in window) {
     var pending = null;
     var mo = new MutationObserver(function () {
