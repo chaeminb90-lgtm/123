@@ -20,7 +20,7 @@
 | 공통 코드 Footer Code | https://raw.githubusercontent.com/chaeminb90-lgtm/123/claude/habokdang-chat-missing-1mg13v/site/dist/imweb/00-common-body.html |
 | 새 페이지 코드 위젯 | https://raw.githubusercontent.com/chaeminb90-lgtm/123/claude/habokdang-chat-missing-1mg13v/site/dist/imweb/01-main-widget.html |
 
-원문 주소를 열어 내용 전체를 복사한다. 01-main-widget.html은 길이가 깁니다(약 4만 3천 자). 붙여 넣은 뒤 코드 창 맨 끝이 `</section>`으로 끝나는지 확인한다.
+원문 주소를 열어 내용 전체를 복사한다. 01-main-widget.html은 길이가 깁니다(약 6만 자). 붙여 넣은 뒤 코드 창 맨 끝이 `</section>`으로 끝나는지 확인한다.
 
 ## 순서
 
