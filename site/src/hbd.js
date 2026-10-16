@@ -257,7 +257,7 @@
     /* 제목: 줄마다 아래에서 밀려 올라옴 */
     each($$('[data-split]', root), function (el) {
       var lines = splitLines(el);
-      if (el.classList.contains('hbd-hero__title')) return;
+      if (el.closest('#hbd-top')) return;
       gsap.from(lines, { yPercent: 115, rotate: 3, duration: 1, ease: 'power4.out', stagger: .13, scrollTrigger: { trigger: el, start: 'top 86%' } });
     });
     each($$('.hbd-head .hbd-eyebrow', root), function (el) {
@@ -273,7 +273,7 @@
         : { y: 80, opacity: 0, rotateX: -14, transformOrigin: '50% 0%', duration: 1, ease: 'power3.out', stagger: .12, scrollTrigger: { trigger: el, start: 'top 86%' } });
     });
     each($$('[data-count]', root), function (el) {
-      if (el.closest('.hbd-hero') || el.closest('#hbd-small')) return;
+      if (el.closest('#hbd-top') || el.closest('#hbd-small')) return;
       ST.create({ trigger: el, start: 'top 92%', once: true, onEnter: function () { countUp(el); } });
     });
     each($$('[data-pop]', root), function (el) {
@@ -291,26 +291,28 @@
     });
     each($$('[data-marquee] ul', root), function (ul) { ul.setAttribute('data-skew', ''); });
 
-    /* 히어로: 로딩이 끝나면 한 번에 등장 */
+    /* 첫 화면 배너: 로딩이 끝나면 과일컵이 솟아오르고 강점 3가지가 차례로 들어옴 */
     if (root.id === 'hbd-top') {
-      var lines = root.querySelectorAll('.hbd-hero__title .hbd-ln > span');
       var q = function (s) { return root.querySelectorAll(s); };
-      gsap.set(lines, { yPercent: 115 });
-      gsap.set(q('[data-hero="pill"],[data-hero="lead"],[data-hero="cta"]'), { y: 30, opacity: 0 });
-      gsap.set(q('[data-hero="visual"]'), { scale: .82, rotate: -5, opacity: 0 });
-      gsap.set(q('[data-hero="sticker"]'), { scale: 0 });
+      var cup = q('[data-hero="cup"]'), pts = q('[data-hero="pt"]');
+      gsap.set(cup, { y: 160, scale: .82, rotate: -8, opacity: 0 });
+      gsap.set(q('[data-hero="logo"]'), { scale: .5, rotate: -12, opacity: 0 });
+      gsap.set(q('[data-hero="rate"]'), { y: 24, opacity: 0 });
+      gsap.set(q('[data-hero="laurel"]'), { scale: 0, rotate: -18 });
+      gsap.set(pts, { x: 90, opacity: 0 });
       gsap.set(q('.hbd-float > span'), { scale: 0 });
       onLoaderDone(function () {
         var tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-        tl.to(q('[data-hero="pill"]'), { y: 0, opacity: 1, duration: .7 })
-          .to(lines, { yPercent: 0, duration: 1.1, stagger: .14 }, '-=.4')
-          .to(q('[data-hero="visual"]'), { scale: 1, rotate: 0, opacity: 1, duration: 1.3, ease: 'back.out(1.4)' }, '-=1')
-          .to(q('[data-hero="lead"],[data-hero="cta"]'), { y: 0, opacity: 1, duration: .8, stagger: .12 }, '-=.9')
-          .to(q('[data-hero="sticker"]'), { scale: 1, duration: 1, ease: 'elastic.out(1,.45)', stagger: .15 }, '-=.6')
-          .to(q('.hbd-float > span'), { scale: 1, duration: .9, ease: 'back.out(2)', stagger: .07 }, '-=1');
+        tl.to(cup, { y: 0, scale: 1, rotate: 0, opacity: 1, duration: 1.2, ease: 'back.out(1.3)' })
+          .to(q('[data-hero="logo"]'), { scale: 1, rotate: 0, opacity: 1, duration: .8, ease: 'back.out(2)' }, '-=.9')
+          .to(q('[data-hero="rate"]'), { y: 0, opacity: 1, duration: .6 }, '-=.5')
+          .to(q('[data-hero="laurel"]'), { scale: 1, rotate: 0, duration: 1, ease: 'elastic.out(1,.5)', onStart: function () { each(q('[data-count]'), countUp); } }, '-=.4')
+          .to(pts, { x: 0, opacity: 1, duration: .7, stagger: .14 }, '-=1.1')
+          .to(q('.hbd-float > span'), { scale: 1, duration: .8, ease: 'back.out(2)', stagger: .07 }, '-=.8');
       });
-      gsap.to(q('.hbd-hero__copy'), { y: -80, opacity: .25, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
-      gsap.to(q('.hbd-hero__visual'), { y: 60, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
+      gsap.to(q('.hbd-banner__cup img'), { y: 70, rotate: 4, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
+      gsap.to(q('.hbd-banner__brand'), { y: -60, opacity: .3, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
+      gsap.to(q('.hbd-banner__pts'), { y: -40, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
     }
 
     /* 소자본 창업: 화면에 고정된 채 사진이 줌아웃되고 카드가 올라옴 */
@@ -416,6 +418,69 @@
     if (root.id === 'hbd-cost') {
       var rows = root.querySelectorAll('[data-rows] tr, tfoot tr');
       gsap.from(rows, { x: -40, opacity: 0, stagger: .1, duration: .6, ease: 'power3.out', scrollTrigger: { trigger: root.querySelector('.hbd-cost'), start: 'top 70%' } });
+    }
+
+    /* 50호점 한정: 매장이 떨어지고 숫자 50이 튀어 오름 */
+    if (root.id === 'hbd-limit') {
+      var fhero = root.querySelector('.hbd-fifty__hero');
+      var ftrig = { trigger: fhero, start: 'top 80%' };
+      gsap.from(root.querySelector('[data-fifty="shop"]'), { y: -160, rotate: -20, opacity: 0, duration: 1, ease: 'bounce.out', scrollTrigger: ftrig });
+      gsap.from(root.querySelector('[data-fifty="num"]'), { scale: .3, opacity: 0, duration: 1.2, ease: 'elastic.out(1,.55)', scrollTrigger: ftrig });
+      gsap.from(root.querySelector('[data-fifty="txt"]'), { x: 60, opacity: 0, duration: .8, delay: .4, ease: 'power3.out', scrollTrigger: ftrig });
+      gsap.from(root.querySelector('[data-fifty="area"]'), { scaleX: 0, duration: .7, delay: .6, ease: 'power3.out', scrollTrigger: ftrig });
+    }
+
+    /* 4계절 메뉴: 화면에 고정된 채 계절이 바퀴처럼 돌아가고 배경색이 바뀜 */
+    if (root.id === 'hbd-seasons') {
+      var spin = root.querySelector('.hbd-seasons__pin');
+      var arts = root.querySelectorAll('.hbd-season');
+      var sbg = root.querySelectorAll('.hbd-seasons__bg i');
+      var dial = root.querySelector('.hbd-seasons__dial');
+      var dlabels = dial ? dial.querySelectorAll('span') : [];
+      var dcolors = ['#E8457A', '#1C93CF', '#D97A12', '#4F6FC0'];
+      var setSeason = function (n) {
+        if (!dial) return;
+        dial.style.setProperty('--s', n);
+        var bar = dial.querySelector('i'); if (bar) bar.style.background = dcolors[n] || '';
+        each(dlabels, function (l, k) { l.classList.toggle('is-on', k === n); });
+      };
+      setSeason(0);
+      if (arts.length > 1) {
+        var tl5 = gsap.timeline({ scrollTrigger: { trigger: spin, start: function () { return 'top ' + hdr() + 'px'; }, end: '+=' + (arts.length - 1) * 75 + '%', pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true,
+          onUpdate: function (self) { setSeason(Math.min(arts.length - 1, Math.round(self.progress * (arts.length - 1)))); } } });
+        each(arts, function (b, i) {
+          if (i === 0) return;
+          var a = arts[i - 1], t = i - 1;
+          tl5.fromTo(a.querySelector('.hbd-season__ph'), { rotate: 0, xPercent: 0, scale: 1, autoAlpha: 1 }, { rotate: -140, xPercent: -40, scale: .55, autoAlpha: 0, ease: 'power2.in', duration: .5, immediateRender: false }, t)
+            .fromTo(a.querySelector('.hbd-season__txt'), { y: 0, autoAlpha: 1 }, { y: -50, autoAlpha: 0, duration: .4, immediateRender: false }, t)
+            .fromTo(b.querySelector('.hbd-season__ph'), { rotate: 140, xPercent: 40, scale: .55, autoAlpha: 0 }, { rotate: 0, xPercent: 0, scale: 1, autoAlpha: 1, ease: 'power2.out', duration: .55 }, t + .45)
+            .fromTo(b.querySelector('.hbd-season__txt'), { y: 50, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .45 }, t + .55)
+            .fromTo(sbg[i], { opacity: 0 }, { opacity: 1, duration: .6 }, t + .2)
+            .fromTo(sbg[i - 1], { opacity: 1 }, { opacity: 0, duration: .6, immediateRender: false }, t + .4);
+        });
+        tl5.to({}, { duration: .4 });
+      }
+    }
+
+    /* 배달앱 리뷰: 겹쳐 있던 휴대폰이 부채꼴로 펼쳐지고 하트가 튀어나옴 */
+    if (root.id === 'hbd-reviews') {
+      var ph = root.querySelector('[data-phones]');
+      var phones = ph.querySelectorAll('.hbd-phone');
+      var fan = { '-2': [-8, 36], '-1': [-4, 14], '0': [0, 0], '1': [4, 14], '2': [8, 36] };
+      each(phones, function (el) {
+        var p = (el.getAttribute('style') || '').replace(/.*--p:\s*(-?\d).*/, '$1');
+        var f = fan[p] || [0, 0], n = parseInt(p, 10) || 0;
+        gsap.fromTo(el, { xPercent: -n * 85, y: 120, rotate: 0, scale: .85, opacity: n === 0 ? 1 : 0 },
+          { xPercent: 0, y: f[1], rotate: f[0], scale: 1, opacity: 1, ease: 'power2.out', scrollTrigger: { trigger: ph, start: 'top 90%', end: 'top 35%', scrub: 1 } });
+      });
+      gsap.from(ph.querySelectorAll('.heart'), { scale: 0, rotate: -40, duration: 1, ease: 'elastic.out(1,.5)', stagger: .15, scrollTrigger: { trigger: ph, start: 'top 45%' } });
+    }
+
+    /* 릴스·쇼츠: 흐르는 띠가 스크롤에 맞춰 기울고, 휴대폰이 튀어 오름 */
+    if (root.id === 'hbd-sns') {
+      var rw = root.querySelector('.hbd-reels__wrap');
+      gsap.fromTo(rw, { rotate: -4, scale: 1.04 }, { rotate: 3, scale: 1.04, ease: 'none', scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: true } });
+      gsap.from(rw.querySelectorAll('.hbd-reels__track ul:first-child .hbd-reel'), { y: 140, opacity: 0, rotate: 8, duration: .9, ease: 'back.out(1.6)', stagger: .1, scrollTrigger: { trigger: rw, start: 'top 85%' } });
     }
 
     /* 절차: 진행선이 차고 단계가 하나씩 켜짐 */

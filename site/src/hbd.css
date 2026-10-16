@@ -687,3 +687,180 @@
 @media (prefers-reduced-motion:reduce){
   .hbd-slider__dots i.is-on::after{transform:none}
 }
+
+/* ---- 추가 섹션: 첫 화면 배너, 50호점 한정, 4계절 메뉴, 배달앱 리뷰, 릴스·쇼츠 ---- */
+
+/* 00b 첫 화면 배너 (기존 하복당 홈페이지 첫 화면 구성: 로고·평점 / 과일컵 / 강점 3가지) */
+.hbd-banner{display:grid;align-items:end;min-height:calc(100vh - var(--hbd-hdr,0px) - 58px);min-height:calc(100svh - var(--hbd-hdr,0px) - 58px);padding-top:clamp(28px,4vw,56px);background:radial-gradient(110% 95% at 50% 45%,#FF7B22 0,#F25E0B 55%,#DC4C05 100%);color:#fff}
+.hbd-banner > .hbd-wrap{width:100%}
+.hbd-banner::before{content:"";position:absolute;left:50%;top:46%;width:min(900px,80vw);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,225,90,.32),rgba(255,225,90,0));pointer-events:none}
+.hbd-banner__grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr) minmax(0,1fr);align-items:end;gap:clamp(12px,2.4vw,36px);max-width:1340px}
+.hbd-banner__brand,.hbd-banner__pts{align-self:center;padding-bottom:clamp(40px,5vw,72px)}
+.hbd-banner__brand{display:grid;justify-items:center;gap:14px;text-align:center}
+.hbd-banner__brand .logo{width:clamp(130px,12.5vw,190px);height:auto}
+.hbd-banner__brand .rate{font-size:clamp(17px,1.5vw,21px);font-weight:700;letter-spacing:-.02em}
+.hbd-laurel{display:flex;align-items:center;gap:4px;color:#fff}
+.hbd-laurel .lf{width:clamp(30px,2.8vw,40px);height:auto;filter:drop-shadow(0 2px 0 rgba(150,40,0,.25))}
+.hbd-laurel .rt{transform:scaleX(-1)}
+.hbd-laurel p{display:grid;justify-items:center;line-height:1}
+.hbd-laurel small{margin-bottom:4px;font-size:clamp(14px,1.2vw,17px);font-weight:700}
+.hbd-laurel b{font-family:var(--fun);font-size:clamp(58px,6vw,86px);font-weight:400;letter-spacing:-.02em;text-shadow:0 5px 0 rgba(150,40,0,.3);font-variant-numeric:tabular-nums}
+.hbd-banner__cup{justify-self:center;width:100%;max-width:min(600px,calc(100svh - var(--hbd-hdr,0px) - 150px))}
+.hbd-banner__cup img{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 30px rgba(120,30,0,.3))}
+.hbd-banner__pts li{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:clamp(10px,1.2vw,16px);padding:clamp(14px,1.6vw,22px) 0;border-bottom:1px solid rgba(255,255,255,.32)}
+.hbd-banner__pts li:last-child{border-bottom:0}
+.hbd-banner__pts .ic{display:grid;place-items:center;width:clamp(52px,4.8vw,70px);aspect-ratio:1;border-radius:50%;background:#fff;color:var(--or);box-shadow:0 8px 18px rgba(120,30,0,.18)}
+.hbd-banner__pts .ic svg{width:58%;height:58%}
+.hbd-banner__pts .no{font-size:clamp(46px,4.8vw,72px);line-height:1;font-weight:800;letter-spacing:-.04em}
+.hbd-banner__pts em{display:inline-block;margin-bottom:6px;padding:3px 10px;border-radius:6px;background:var(--yellow);color:var(--ink);font-size:clamp(12px,1vw,14px);font-weight:800}
+.hbd-banner__pts b{display:block;font-size:clamp(18px,1.8vw,27px);line-height:1.3;font-weight:800;letter-spacing:-.03em}
+.hbd-banner__note{position:absolute;left:0;right:0;bottom:8px;z-index:1;max-width:1340px;margin:0 auto;padding:0 20px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.82)}
+.hbd-banner .hbd-float .f1{left:3%;top:10%;width:56px}
+.hbd-banner .hbd-float .f2{left:30%;top:8%;width:40px}
+.hbd-banner .hbd-float .f3{right:34%;top:12%;width:52px}
+.hbd-banner .hbd-float .f4{right:2%;bottom:22%;width:50px}
+.hbd-hero--intro{min-height:0;padding-block:clamp(72px,8vw,120px)}
+
+/* 09b 50호점 한정 모집 */
+.hbd-fifty{background:#FAFAFA}
+.hbd-fifty .hbd-head{margin-bottom:clamp(10px,2vw,24px)}
+.hbd-fifty__hero{display:flex;align-items:flex-end;justify-content:center;gap:clamp(2px,1vw,14px)}
+.hbd-fifty__hero .shop{position:relative;z-index:2;width:clamp(90px,10vw,150px);margin:0 -14px 10px 0}
+.hbd-fifty__hero .shop svg{display:block;width:100%;height:auto}
+.hbd-fifty__hero .num b{display:block;font-size:clamp(150px,19vw,260px);line-height:.84;font-weight:900;letter-spacing:-.06em;color:#FF7A1A;font-variant-numeric:tabular-nums;text-shadow:1px 1px 0 #F4660D,2px 2px 0 #EF600B,3px 3px 0 #EA5A09,4px 4px 0 #E45507,5px 5px 0 #DE5006,6px 6px 0 #D84B05,7px 7px 0 #D14604,8px 8px 0 #CA4203,9px 9px 0 #C33E02,16px 20px 26px rgba(150,45,0,.28)}
+.hbd-fifty__hero .txt{display:grid;justify-items:start;gap:8px;padding-bottom:clamp(14px,2.2vw,32px)}
+.hbd-fifty__hero .tag{padding:7px 16px;border-radius:999px;background:var(--or);color:#fff;font-size:clamp(16px,1.6vw,22px);font-weight:800;box-shadow:0 0 0 4px #FFD9BD}
+.hbd-fifty__hero .txt b{font-size:clamp(26px,3vw,42px);line-height:1.15;font-weight:800;letter-spacing:-.04em;color:var(--ink)}
+.hbd-fifty__area{width:max-content;max-width:100%;margin:clamp(18px,2.4vw,28px) auto 0;padding:10px 28px;background:var(--or);color:#fff;font-size:clamp(22px,2.4vw,32px);font-weight:800;letter-spacing:-.02em}
+.hbd-fifty__cards{display:grid;grid-template-columns:repeat(3,1fr);max-width:1000px;margin:clamp(32px,4vw,48px) auto 0;padding:clamp(26px,3.4vw,44px) clamp(14px,2.4vw,28px);border-radius:16px;background:#FF8236;color:#fff;box-shadow:0 24px 50px rgba(242,106,16,.22)}
+.hbd-fifty__cards li{display:grid;justify-items:center;align-content:start;gap:10px;padding:8px clamp(12px,2vw,28px);text-align:center}
+.hbd-fifty__cards li + li{border-left:1px solid rgba(255,255,255,.45)}
+.hbd-fifty__cards .ic{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:#fff;color:var(--or)}
+.hbd-fifty__cards .ic svg{width:36px;height:36px}
+.hbd-fifty__cards b{font-size:18px;font-weight:800;letter-spacing:-.03em}
+.hbd-fifty__cards p{font-size:15px;line-height:1.7;color:#fff}
+
+/* 10b 4계절 메뉴 (GSAP이 있으면 화면 고정, 스크롤하면 계절이 돌아감) */
+.hbd-seasons{background:#FFF4F6}
+.hbd-seasons__pin{position:relative;padding-block:clamp(72px,8vw,120px)}
+.hbd-seasons__bg{position:absolute;inset:0;z-index:0}
+.hbd-seasons__bg i{position:absolute;inset:0;opacity:0}
+.hbd-seasons__bg .is-spring{opacity:1;background:radial-gradient(90% 80% at 30% 60%,#FFD6E1 0,#FFF4F6 70%)}
+.hbd-seasons__bg .is-summer{background:radial-gradient(90% 80% at 30% 60%,#C9EEFF 0,#F1FAFF 70%)}
+.hbd-seasons__bg .is-autumn{background:radial-gradient(90% 80% at 30% 60%,#FFE0A8 0,#FFF6E6 70%)}
+.hbd-seasons__bg .is-winter{background:radial-gradient(90% 80% at 30% 60%,#DCE5FA 0,#F6F8FD 70%)}
+.hbd-seasons .hbd-wrap{position:relative;z-index:1}
+.hbd-seasons__head{margin-bottom:clamp(24px,4vw,44px)}
+.hbd-seasons__dial{display:none}
+.hbd-seasons__stage{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.hbd-season{--sc:#E8457A;display:grid;align-content:start;border-radius:24px;background:#fff;overflow:hidden;box-shadow:var(--shadow)}
+.hbd-season.is-summer{--sc:#1C93CF}
+.hbd-season.is-autumn{--sc:#D97A12}
+.hbd-season.is-winter{--sc:#4F6FC0}
+.hbd-season__ph{position:relative;aspect-ratio:4/3;overflow:hidden}
+.hbd-season__ph img{width:100%;height:100%;object-fit:cover}
+.hbd-season__ph .fr{position:absolute;right:12px;top:12px;width:52px;height:52px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.2));animation:hbd-bob 6s ease-in-out infinite}
+.hbd-season__txt{display:grid;gap:8px;padding:20px 22px 24px}
+.hbd-season .en{font-size:13px;font-weight:800;letter-spacing:.24em;color:var(--sc)}
+.hbd-season h3{display:flex;align-items:baseline;gap:10px}
+.hbd-season h3 b{font-size:34px;line-height:1;font-weight:800;letter-spacing:-.04em;color:var(--sc)}
+.hbd-season h3 span{font-size:15px;font-weight:700;color:var(--ink-2)}
+.hbd-season .lead{font-size:18px;font-weight:700;letter-spacing:-.03em}
+.hbd-season .hbd-chips{margin-top:6px}
+.hbd-season .hbd-chips li{font-size:14px;border-color:color-mix(in srgb,var(--sc) 30%,#fff)}
+.hbd-seasons.hbd-gsap .hbd-seasons__pin{padding-block:clamp(20px,3vh,40px)}
+.hbd-seasons.hbd-gsap .hbd-seasons__head{margin-bottom:clamp(12px,2vh,24px)}
+.hbd-seasons.hbd-gsap .hbd-seasons__dial{position:relative;display:grid;grid-template-columns:repeat(4,1fr);width:min(460px,100%);margin:0 auto clamp(14px,2.4vh,28px);padding:5px;border-radius:999px;background:#fff;box-shadow:0 8px 22px rgba(122,52,0,.1)}
+.hbd-seasons__dial span{position:relative;z-index:1;padding:9px 0;text-align:center;font-size:16px;font-weight:800;color:var(--ink-2);transition:color .35s}
+.hbd-seasons__dial span.is-on{color:#fff}
+.hbd-seasons__dial i{position:absolute;left:5px;top:5px;bottom:5px;width:calc((100% - 10px) / 4);border-radius:999px;background:var(--or);transform:translateX(calc(var(--s,0) * 100%));transition:transform .55s cubic-bezier(.6,0,.2,1),background .55s}
+.hbd-seasons.hbd-gsap .hbd-seasons__stage{grid-template-columns:1fr;max-width:1040px;margin:0 auto}
+.hbd-seasons.hbd-gsap .hbd-season{grid-area:1/1;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:clamp(24px,5vw,64px);background:none;box-shadow:none;overflow:visible}
+.hbd-seasons.hbd-gsap .hbd-season__ph{justify-self:center;width:min(420px,36vw,calc(100vh - 420px));aspect-ratio:1;border-radius:50%;border:10px solid #fff;box-shadow:0 30px 60px rgba(90,40,20,.18);overflow:visible}
+.hbd-seasons.hbd-gsap .hbd-season__ph img{border-radius:50%}
+.hbd-seasons.hbd-gsap .hbd-season__ph .fr{right:-6%;top:2%;width:22%;height:22%}
+.hbd-seasons.hbd-gsap .hbd-season__txt{padding:0;gap:12px}
+.hbd-seasons.hbd-gsap .hbd-season .en{font-size:clamp(14px,1.3vw,17px)}
+.hbd-seasons.hbd-gsap .hbd-season h3 b{font-size:clamp(56px,6.4vw,92px)}
+.hbd-seasons.hbd-gsap .hbd-season h3 span{font-size:clamp(16px,1.5vw,20px)}
+.hbd-seasons.hbd-gsap .hbd-season .lead{font-size:clamp(20px,2.1vw,28px)}
+.hbd-seasons.hbd-gsap .hbd-season .hbd-chips li{font-size:16px;background:#fff}
+
+/* 12b 배달앱 리뷰 (휴대폰 화면이 부채꼴로 펼쳐짐) */
+.hbd-reviews__badge{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:999px;background:#fff;color:var(--or-deep);font-size:clamp(16px,1.6vw,20px);font-weight:800;box-shadow:0 10px 24px rgba(90,30,0,.2)}
+.hbd-reviews__badge::before,.hbd-reviews__badge::after{content:"✦";color:var(--yellow);text-shadow:0 0 1px var(--or-deep)}
+.hbd-phones{position:relative;display:flex;justify-content:center;align-items:center;max-width:1100px;margin:0 auto;padding-block:16px 34px}
+.hbd-phone{position:relative;flex:none;width:clamp(140px,14vw,190px);margin:0 clamp(-26px,-1.6vw,-12px);padding:7px;border-radius:30px;background:#141414;box-shadow:0 26px 50px rgba(90,30,0,.35)}
+.hbd-phone img{display:block;width:100%;height:auto;border-radius:23px}
+.hbd-phone.is-main{z-index:3;width:clamp(190px,19vw,250px)}
+.hbd-phone[style*="--p:-2"]{z-index:1;transform:translateY(36px) rotate(-8deg)}
+.hbd-phone[style*="--p:-1"]{z-index:2;transform:translateY(14px) rotate(-4deg)}
+.hbd-phone[style*="--p:1"]{z-index:2;transform:translateY(14px) rotate(4deg)}
+.hbd-phone[style*="--p:2"]{z-index:1;transform:translateY(36px) rotate(8deg)}
+.hbd-phones .heart{position:absolute;z-index:4;display:grid;place-items:center;width:clamp(48px,5vw,66px);aspect-ratio:1;border-radius:18px;background:#fff;box-shadow:0 12px 24px rgba(90,30,0,.25);animation:hbd-bob 5s ease-in-out infinite}
+.hbd-phones .heart::before{content:"♥";font-size:clamp(28px,3vw,40px);line-height:1;color:var(--or)}
+.hbd-phones .heart::after{content:"";position:absolute;left:24%;bottom:-8px;border:8px solid transparent;border-bottom:0;border-top-color:#fff}
+.hbd-phones .h1{left:24%;top:8%;transform:rotate(-12deg)}
+.hbd-phones .h2{right:24%;top:30%;animation-delay:-1.5s}
+.hbd-phones .h3{left:30%;bottom:10%;animation-delay:-3s}
+.hbd-phones .h4{right:16%;top:4%;width:clamp(40px,4vw,52px);animation-delay:-2.2s}
+.hbd-gsap .hbd-phones .heart{animation:none}
+
+/* 12c 릴스·쇼츠 (휴대폰 화면이 흐르는 띠) */
+.hbd-reels .hbd-head{margin-bottom:clamp(28px,4vw,48px)}
+.hbd-reels__wrap{overflow:hidden;padding-block:10px 24px}
+.hbd-reels__track{display:flex;width:max-content;animation:hbd-flow3 42s linear infinite}
+.hbd-reels__wrap:hover .hbd-reels__track{animation-play-state:paused}
+@keyframes hbd-flow3{to{transform:translateX(-33.3333%)}}
+.hbd-reels__track ul{display:flex;gap:clamp(16px,2vw,28px);padding-right:clamp(16px,2vw,28px)}
+.hbd-reel{position:relative;flex:none;width:clamp(160px,16vw,220px);padding:7px;border-radius:30px;background:#141414;box-shadow:0 22px 44px rgba(90,30,0,.35);transition:transform .35s}
+.hbd-reel:nth-child(odd){transform:translateY(18px)}
+.hbd-reel:hover{transform:translateY(-6px) scale(1.03)}
+.hbd-reel img{display:block;width:100%;height:auto;border-radius:23px}
+.hbd-reel .play{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:rgba(255,255,255,.88);box-shadow:0 8px 20px rgba(0,0,0,.25);animation:hbd-play 2s ease-in-out infinite}
+.hbd-reel .play::before{content:"";position:absolute;left:23px;top:17px;border-style:solid;border-width:12px 0 12px 19px;border-color:transparent transparent transparent var(--or)}
+@keyframes hbd-play{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.55),0 8px 20px rgba(0,0,0,.25)}50%{box-shadow:0 0 0 14px rgba(255,255,255,0),0 8px 20px rgba(0,0,0,.25)}}
+
+@media (max-width:960px){
+  .hbd-banner{min-height:0;align-items:start}
+  .hbd-banner__grid{grid-template-columns:1fr;justify-items:center;gap:6px}
+  .hbd-banner__brand{order:1;padding-bottom:6px;gap:8px}
+  .hbd-banner__brand .logo{width:120px}
+  .hbd-banner__pts{order:2;width:min(460px,100%);padding:10px 18px;border-radius:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28)}
+  .hbd-banner__cup{order:3;max-width:360px;margin-top:6px}
+  .hbd-banner__note{position:static;padding:8px 20px 12px;text-align:center}
+  .hbd-banner .hbd-float .f2,.hbd-banner .hbd-float .f3{display:none}
+  .hbd-seasons__stage{grid-template-columns:repeat(2,1fr)}
+  .hbd-fifty__cards{grid-template-columns:1fr;max-width:520px}
+  .hbd-fifty__cards li + li{border-left:0;border-top:1px solid rgba(255,255,255,.45);padding-top:20px}
+  .hbd-seasons.hbd-gsap .hbd-season{grid-template-columns:1fr;justify-items:center;text-align:center;gap:14px}
+  .hbd-seasons.hbd-gsap .hbd-season__ph{width:min(260px,62vw,calc(100vh - 520px))}
+  .hbd-seasons.hbd-gsap .hbd-season h3{justify-content:center}
+  .hbd-seasons.hbd-gsap .hbd-season .hbd-chips{justify-content:center}
+}
+@media (max-width:600px){
+  .hbd-banner__pts li{gap:10px;padding:12px 0}
+  .hbd-banner__pts .ic{width:44px}
+  .hbd-banner__pts .no{font-size:38px}
+  .hbd-banner__pts b{font-size:17px}
+  .hbd-laurel b{font-size:56px}
+  .hbd-fifty__hero{margin-top:6px}
+  .hbd-fifty__hero .shop{width:64px;margin:0 -8px 6px 0}
+  .hbd-fifty__hero .num b{font-size:118px;text-shadow:1px 1px 0 #F4660D,2px 2px 0 #EA5A09,3px 3px 0 #DE5006,4px 4px 0 #D14604,5px 5px 0 #C33E02,10px 12px 16px rgba(150,45,0,.28)}
+  .hbd-fifty__hero .tag{font-size:13px;padding:5px 11px}
+  .hbd-fifty__hero .txt b{font-size:19px}
+  .hbd-seasons__stage{grid-template-columns:1fr}
+  .hbd-seasons.hbd-gsap .hbd-seasons__head .hbd-sub{font-size:14px}
+  .hbd-seasons__dial span{font-size:14px;padding:8px 0}
+  .hbd-seasons.hbd-gsap .hbd-season h3 b{font-size:50px}
+  .hbd-seasons.hbd-gsap .hbd-season .lead{font-size:18px}
+  .hbd-seasons.hbd-gsap .hbd-season .hbd-chips li{font-size:13px;padding:6px 11px}
+  .hbd-phone{width:30vw;margin:0 -9vw}
+  .hbd-phone.is-main{width:44vw}
+  .hbd-phone[style*="--p:-2"],.hbd-phone[style*="--p:2"]{display:none}
+  .hbd-phones .h1{left:6%}.hbd-phones .h2{right:4%}.hbd-phones .h3{left:10%}.hbd-phones .h4{display:none}
+  .hbd-reel{width:150px}
+}
+@media (prefers-reduced-motion:reduce){
+  .hbd-reels__track{animation:none}
+}
