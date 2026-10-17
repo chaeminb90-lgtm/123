@@ -110,6 +110,10 @@ def build_dist(sha, phone, inline_css):
         report.append((name, len(out)))
     allin = '<!-- 하복당 가맹 페이지 본문 (코드 위젯 1개에 그대로 붙여 넣기) -->\n' + '\n'.join(parts) + '\n'
     write(os.path.join(DIST, 'imweb', '01-main-widget.html'), allin)
+    # 글자·사진을 직접 고치는 편집기 (크롬에서 열어 쓰는 파일 1개)
+    editor = read(os.path.join(SRC, 'editor.html'))
+    editor = editor.replace('{{HEAD}}', '\n'.join(head)).replace('{{SHA}}', sha[:7]).replace('{{WIDGET}}', '\n'.join(parts))
+    write(os.path.join(DIST, 'hbd-editor.html'), editor)
     report.append(('01-main-widget.html', len(allin)))
     for name, n in report:
         flag = 'OK ' if n <= WIDGET_LIMIT else 'OVER'
