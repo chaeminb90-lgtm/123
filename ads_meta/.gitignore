@@ -1,0 +1,9 @@
+# rebuildable work files (python3 plates.py && python3 make.py)
+fonts/
+plates/
+out/
+_m/
+_qc/
+_jobs.json
+_boxes.json
+__pycache__/
