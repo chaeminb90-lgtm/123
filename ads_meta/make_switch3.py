@@ -19,8 +19,17 @@ RIGHT = {
 }
 
 
+SPOT = '''<div class="a" style="left:0;top:0;width:1080px;height:660px;clip-path:polygon(620px 0,1080px 0,1080px 660px,460px 660px);
+  background:radial-gradient(ellipse 46% 62% at 74% 40%,rgba(255,200,140,0) 0%,rgba(255,128,30,.34) 50%,rgba(225,88,8,.86) 100%);mix-blend-mode:multiply"></div>
+<div class="a" style="left:0;top:0;width:1080px;height:660px;clip-path:polygon(700px 0,880px 0,1080px 620px,560px 620px);
+  background:linear-gradient(rgba(255,178,92,.55),rgba(255,150,60,.18) 70%,rgba(255,150,60,0));mix-blend-mode:screen;filter:blur(18px)"></div>
+<div class="a" style="left:0;top:0;width:1080px;height:660px;clip-path:polygon(620px 0,1080px 0,1080px 660px,460px 660px);
+  background:radial-gradient(ellipse 30% 40% at 77% 46%,rgba(255,190,110,.28),rgba(255,190,110,0) 70%);mix-blend-mode:screen"></div>'''
+
+
 def page(k):
     url, size, pos, fill = RIGHT[k]
+    spot = SPOT if k == 'b' else ''
     return make_switch.BASE(1080) + f'''<style>
 @font-face{{font-family:BHS;src:url('{BHS}')}}
 body{{background:#120B07}}
@@ -41,7 +50,7 @@ body{{background:#120B07}}
 .sbar span{{transform:skewX(12deg);font-size:39px;font-weight:900;font-style:italic;color:#2A1206;letter-spacing:-.045em;white-space:nowrap}}
 .sbar b{{font-size:46px;font-weight:900}}
 </style>
-<div class="a cafe"></div><div class="a fruit"></div>
+<div class="a cafe"></div><div class="a fruit"></div>{spot}
 <svg class="a" style="left:0;top:0" width="1080" height="660"><defs><filter id="g"><feGaussianBlur stdDeviation="6"/></filter></defs>
 <line x1="620" y1="0" x2="460" y2="660" stroke="#FF8A1E" stroke-width="18" filter="url(#g)" opacity=".9"/>
 <line x1="620" y1="0" x2="460" y2="660" stroke="#FFD2A1" stroke-width="5"/></svg>
