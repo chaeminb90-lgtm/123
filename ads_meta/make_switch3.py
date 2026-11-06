@@ -1,0 +1,71 @@
+"""카페 업종변경 500만원부터?! — 실사 버전. 왼쪽: 고객이 준 빈 카페 사진(업스케일만, 내용 그대로),
+오른쪽: 하복당 실제 제품 사진. AI로 새로 그린 이미지는 쓰지 않는다.
+
+usage: python3 make_switch3.py -> out/sw3_a.jpg (제품 라인업), out/sw3_b.jpg (컵 진열)
+"""
+import json, os, subprocess
+import make, make_switch
+
+HERE = make.HERE
+BHS = make.u('fonts/BlackHanSans-Regular.ttf')
+CAFE = make.u('assets/real_empty_cafe.jpg')
+HERO = 'file:///home/user/123/site/img/hero_lineup.jpg'
+CUT = 'file:///home/user/123/site/img/line_cutfruit.jpg'
+
+RIGHT = {
+    # background for the 하복당 half: (url, size, position, fill colour)
+    'a': (HERO, '1000px auto', '509px -14px', '#F07A2C'),
+    'b': (CUT, 'auto 760px', '67px -10px', '#FBF3EA'),
+}
+
+
+def page(k):
+    url, size, pos, fill = RIGHT[k]
+    return make_switch.BASE(1080) + f'''<style>
+@font-face{{font-family:BHS;src:url('{BHS}')}}
+body{{background:#120B07}}
+.cafe{{left:0;top:0;width:1080px;height:660px;background:url('{CAFE}') -170px 0/auto 660px no-repeat;
+  filter:brightness(.72) saturate(.5) contrast(1.05);clip-path:polygon(0 0,620px 0,460px 660px,0 660px)}}
+.fruit{{left:0;top:0;width:1080px;height:660px;background:{fill} url('{url}') {pos}/{size} no-repeat;
+  clip-path:polygon(620px 0,1080px 0,1080px 660px,460px 660px)}}
+.shade{{left:0;top:0;width:1080px;height:1080px;background:linear-gradient(rgba(18,11,7,0) 0%,rgba(18,11,7,0) 46%,rgba(18,11,7,.7) 56%,#120B07 64%)}}
+.lab{{top:34px;padding:10px 24px;border-radius:40px;font-size:30px;font-weight:900;letter-spacing:-.03em}}
+.lab.c{{left:36px;background:rgba(30,30,30,.82);color:#e6e6e6}}
+.lab.h{{left:660px;background:#FF8A1E;color:#2A1206}}
+.l1{{left:0;right:0;top:582px;text-align:center;color:#fff;font-family:BHS;font-size:112px;letter-spacing:-.01em;line-height:1;text-shadow:0 6px 18px rgba(0,0,0,.6)}}
+.l2{{left:0;right:0;top:706px;display:flex;justify-content:center;align-items:flex-end;gap:14px}}
+.l2 .n{{font-family:BHS;font-size:220px;line-height:.92;color:#FF8A1E;letter-spacing:-.02em;transform:skewX(-8deg);text-shadow:0 8px 0 #6b2600}}
+.l2 .b{{font-family:BHS;font-size:112px;line-height:1;color:#fff;margin-bottom:12px;transform:skewX(-8deg)}}
+.brush{{left:120px;top:918px}}
+.sbar{{left:34px;right:34px;top:958px;height:88px;background:#FF8A1E;transform:skewX(-12deg);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.35)}}
+.sbar span{{transform:skewX(12deg);font-size:39px;font-weight:900;font-style:italic;color:#2A1206;letter-spacing:-.045em;white-space:nowrap}}
+.sbar b{{font-size:46px;font-weight:900}}
+</style>
+<div class="a cafe"></div><div class="a fruit"></div>
+<svg class="a" style="left:0;top:0" width="1080" height="660"><defs><filter id="g"><feGaussianBlur stdDeviation="6"/></filter></defs>
+<line x1="620" y1="0" x2="460" y2="660" stroke="#FF8A1E" stroke-width="18" filter="url(#g)" opacity=".9"/>
+<line x1="620" y1="0" x2="460" y2="660" stroke="#FFD2A1" stroke-width="5"/></svg>
+<div class="a shade"></div>
+<div class="a lab c k">기존 카페</div><div class="a lab h k">하복당</div>
+<div class="a l1 k">카페 업종변경</div>
+<div class="a l2 k"><span class="n">500만원</span><span class="b">부터?!</span></div>
+<svg class="a brush" width="840" height="40" viewBox="0 0 840 40"><path d="M8 30 C 220 8, 560 4, 832 16" stroke="#FFB15C" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M90 36 C 320 22, 560 22, 780 30" stroke="#FF8A1E" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+<div class="a sbar k"><span>배달로만 <b>8900만원</b> 매출 달성 + 2인 운영 가능 업종</span></div>'''
+
+
+if __name__ == '__main__':
+    out = os.path.join(HERE, 'out'); os.makedirs(out, exist_ok=True)
+    jobs = []
+    for k in RIGHT:
+        hp = os.path.join(out, f'sw3_{k}.html'); open(hp, 'w').write(page(k))
+        jobs.append({'html': hp, 'out': os.path.join(out, f'sw3_{k}.png'), 'width': 1080, 'height': 1080})
+    jp = os.path.join(HERE, '_jobs_sw3.json'); json.dump(jobs, open(jp, 'w'))
+    subprocess.run(['node', os.path.join(HERE, 'render.js'), jp], check=True)
+    from PIL import Image
+    ims = []
+    for j in jobs:
+        im = Image.open(j['out']).convert('RGB'); im.save(j['out'][:-4] + '.jpg', quality=93); ims.append(im)
+    sh = Image.new('RGB', (1110, 540), (28, 28, 28))
+    for i, im in enumerate(ims):
+        sh.paste(im.resize((540, 540)), (i * 570, 0))
+    sh.save(os.path.join(HERE, '_sheet_sw3.jpg'), quality=90)
