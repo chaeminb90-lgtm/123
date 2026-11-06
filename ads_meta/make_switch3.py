@@ -55,7 +55,10 @@ body{{background:#120B07}}
 <line x1="620" y1="0" x2="460" y2="660" stroke="#FF8A1E" stroke-width="18" filter="url(#g)" opacity=".9"/>
 <line x1="620" y1="0" x2="460" y2="660" stroke="#FFD2A1" stroke-width="5"/></svg>
 <div class="a shade"></div>
-<div class="a lab c k">기존 카페</div><div class="a lab h k">하복당</div>
+<div class="a k" style="left:0;right:0;top:30px;display:flex;justify-content:center;align-items:center;gap:14px">
+<span style="padding:12px 30px;border-radius:44px;background:rgba(28,28,28,.88);color:#eaeaea;font-size:36px;font-weight:900;letter-spacing:-.03em;box-shadow:0 6px 18px rgba(0,0,0,.35)">기존 카페</span>
+<svg width="74" height="52" viewBox="0 0 74 52" style="filter:drop-shadow(0 4px 8px rgba(0,0,0,.45))"><path d="M4 26 H56" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M42 8 L64 26 L42 44" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span style="padding:12px 34px;border-radius:44px;background:#FF8A1E;color:#2A1206;font-size:36px;font-weight:900;letter-spacing:-.03em;box-shadow:0 6px 18px rgba(0,0,0,.35)">하복당</span></div>
 <div class="a l1 k">카페 업종변경</div>
 <div class="a l2 k"><span class="n">500만원</span><span class="b">부터?!</span></div>
 <svg class="a brush" width="840" height="40" viewBox="0 0 840 40"><path d="M8 30 C 220 8, 560 4, 832 16" stroke="#FFB15C" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M90 36 C 320 22, 560 22, 780 30" stroke="#FF8A1E" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
