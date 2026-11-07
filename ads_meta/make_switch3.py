@@ -60,7 +60,7 @@ body{{background:#120B07}}
 <svg width="74" height="52" viewBox="0 0 74 52" style="filter:drop-shadow(0 4px 8px rgba(0,0,0,.45))"><path d="M4 26 H56" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M42 8 L64 26 L42 44" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
 <span style="padding:12px 34px;border-radius:44px;background:#FF8A1E;color:#2A1206;font-size:36px;font-weight:900;letter-spacing:-.03em;box-shadow:0 6px 18px rgba(0,0,0,.35)">하복당</span></div>
 <div class="a l1 k">카페 업종변경</div>
-<div class="a l2 k"><span class="n">500만원</span><span class="b">부터?!</span></div>
+<div class="a l2 k"><span class="n">300만원</span><span class="b">부터?!</span></div>
 <svg class="a brush" width="840" height="40" viewBox="0 0 840 40"><path d="M8 30 C 220 8, 560 4, 832 16" stroke="#FFB15C" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M90 36 C 320 22, 560 22, 780 30" stroke="#FF8A1E" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
 <div class="a sbar k"><span>배달로만 <b>8900만원</b> 매출 달성 + 2인 운영 가능 업종</span></div>'''
 
