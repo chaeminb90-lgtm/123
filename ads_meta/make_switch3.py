@@ -238,3 +238,59 @@ if __name__ == '__main__' and os.environ.get('SW916SAME'):
     json.dump([{'html': hp, 'out': os.path.join(HERE, 'out', 'sw3_b_916same.png'), 'width': 1080, 'height': 1920}], open(jp, 'w'))
     subprocess.run(['node', os.path.join(HERE, 'render.js'), jp], check=True)
     Image.open(os.path.join(HERE, 'out', 'sw3_b_916same.png')).convert('RGB').save(os.path.join(HERE, 'out', '하복당_업종변경_9x16_실사_300만원_그대로.jpg'), quality=93)
+
+
+def page916_scaled():
+    """9:16 (1080x1920) of the 1:1 B design with every text element scaled 1.33x (sqrt(1920/1080)),
+    per the resize rule. "300만원 부터?!" and the bar text would pass 950px at that size, so they break
+    onto two lines. Text stays inside the Stories safe zone (y 269-1651)."""
+    S = 4 / 3
+    z = lambda n: round(n * S)
+    L, R, Hs = 700, 430, 1060
+    rp = f'polygon({L}px 0,1080px 0,1080px {Hs}px,{R}px {Hs}px)'
+    clean = make.u('assets/cutfruit_clean.jpg')
+    pill = f'padding:{z(12)}px {z(30)}px;border-radius:60px;font-size:{z(36)}px;font-weight:900;letter-spacing:-.03em;box-shadow:0 8px 24px rgba(0,0,0,.35)'
+    return make_switch.BASE(1920) + f'''<style>
+@font-face{{font-family:BHS;src:url('{BHS}')}}
+body{{background:#120B07}}
+.cafe{{left:0;top:0;width:1080px;height:{Hs}px;background:url('{CAFE}') -470px 0/auto 1250px no-repeat;
+  filter:brightness(.72) saturate(.5) contrast(1.05);clip-path:polygon(0 0,{L}px 0,{R}px {Hs}px,0 {Hs}px)}}
+.fruit{{left:0;top:0;width:1080px;height:{Hs}px;background:#E8DFD3 url('{clean}') 60px 236px/auto 700px no-repeat;clip-path:{rp}}}
+.fruittop{{left:0;top:0;width:1080px;height:330px;clip-path:{rp};background:linear-gradient(#E8DFD3 0%,#E8DFD3 76%,rgba(232,223,211,0) 100%)}}
+.sp{{left:0;top:0;width:1080px;height:{Hs}px;clip-path:{rp}}}
+.shade{{left:0;top:0;width:1080px;height:1920px;background:linear-gradient(rgba(18,11,7,0) 0%,rgba(18,11,7,0) 35%,rgba(18,11,7,.72) 43%,#120B07 50%)}}
+.l1{{left:0;right:0;top:812px;text-align:center;color:#fff;font-family:BHS;font-size:{z(112)}px;letter-spacing:-.01em;line-height:1;text-shadow:0 8px 24px rgba(0,0,0,.6)}}
+.n{{left:0;right:0;top:960px;text-align:center;font-family:BHS;font-size:280px;line-height:.92;color:#FF8A1E;letter-spacing:-.02em;transform:skewX(-8deg);text-shadow:0 {z(8)}px 0 #6b2600}}
+.b{{left:0;right:0;top:1222px;text-align:center;font-family:BHS;font-size:{z(112)}px;line-height:1;color:#fff;transform:skewX(-8deg);text-shadow:0 8px 24px rgba(0,0,0,.6)}}
+.brush{{left:90px;top:1374px}}
+.sbar{{left:34px;right:34px;top:1434px;height:186px;background:#FF8A1E;transform:skewX(-12deg);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(0,0,0,.35)}}
+.sbar span{{transform:skewX(12deg);font-size:{z(39)}px;font-weight:900;font-style:italic;color:#2A1206;letter-spacing:-.045em;line-height:1.18;text-align:center;white-space:nowrap}}
+.sbar b{{font-size:{z(46)}px;font-weight:900}}
+</style>
+<div class="a cafe"></div><div class="a fruit"></div><div class="a fruittop"></div>
+<div class="a sp" style="background:radial-gradient(ellipse 48% 50% at 72% 46%,rgba(255,200,140,0) 0%,rgba(255,128,30,.34) 50%,rgba(225,88,8,.86) 100%);mix-blend-mode:multiply"></div>
+<div class="a" style="left:0;top:0;width:1080px;height:{Hs}px;clip-path:polygon(760px 0,940px 0,1080px 980px,540px 980px);
+  background:linear-gradient(rgba(255,178,92,.55),rgba(255,150,60,.18) 70%,rgba(255,150,60,0));mix-blend-mode:screen;filter:blur(18px)"></div>
+<div class="a sp" style="background:radial-gradient(ellipse 32% 32% at 76% 40%,rgba(255,190,110,.28),rgba(255,190,110,0) 70%);mix-blend-mode:screen"></div>
+<svg class="a" style="left:0;top:0" width="1080" height="{Hs}"><defs><filter id="g"><feGaussianBlur stdDeviation="6"/></filter></defs>
+<line x1="{L}" y1="0" x2="{R}" y2="{Hs}" stroke="#FF8A1E" stroke-width="18" filter="url(#g)" opacity=".9"/>
+<line x1="{L}" y1="0" x2="{R}" y2="{Hs}" stroke="#FFD2A1" stroke-width="5"/></svg>
+<div class="a shade"></div>
+<div class="a k" style="left:0;right:0;top:288px;display:flex;justify-content:center;align-items:center;gap:{z(14)}px">
+<span style="{pill};background:rgba(28,28,28,.88);color:#eaeaea">기존 카페</span>
+<svg width="{z(74)}" height="{z(52)}" viewBox="0 0 74 52" style="filter:drop-shadow(0 4px 8px rgba(0,0,0,.45))"><path d="M4 26 H56" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M42 8 L64 26 L42 44" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span style="{pill};background:#FF8A1E;color:#2A1206">하복당</span></div>
+<div class="a l1 k">카페 업종변경</div>
+<div class="a n k">300만원</div>
+<div class="a b k">부터?!</div>
+<svg class="a brush" width="900" height="44" viewBox="0 0 840 40"><path d="M8 30 C 220 8, 560 4, 832 16" stroke="#FFB15C" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M90 36 C 320 22, 560 22, 780 30" stroke="#FF8A1E" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+<div class="a sbar k"><span>배달로만 <b>8900만원</b> 매출 달성<br>+ 2인 운영 가능 업종</span></div>'''
+
+
+if __name__ == '__main__' and os.environ.get('SW916SC'):
+    from PIL import Image
+    hp = os.path.join(HERE, 'out', 'sw3_b_916sc.html'); open(hp, 'w').write(page916_scaled())
+    jp = os.path.join(HERE, '_jobs_sw3.json')
+    json.dump([{'html': hp, 'out': os.path.join(HERE, 'out', 'sw3_b_916sc.png'), 'width': 1080, 'height': 1920}], open(jp, 'w'))
+    subprocess.run(['node', os.path.join(HERE, 'render.js'), jp], check=True)
+    Image.open(os.path.join(HERE, 'out', 'sw3_b_916sc.png')).convert('RGB').save(os.path.join(HERE, 'out', '하복당_업종변경_9x16_실사_300만원_텍스트비례.jpg'), quality=93)
