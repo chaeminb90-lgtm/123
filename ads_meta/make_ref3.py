@@ -53,7 +53,6 @@ R2 = make_switch.BASE(1080) + CSS + f'''<style>
 <div class="a bg2"></div><div class="a ph dim2"></div>
 <div class="a t k" style="top:690px;font-size:60px">보증금 1000만원 · 월세 80만원 매장에서</div>
 <div class="a t k" style="top:776px;font-size:118px">월매출 <span class="y">8200만원?</span></div>
-<div class="a fn k" style="right:40px;top:940px;text-align:right">{NOTE}</div>
 <img class="a" src="{LOGO_W}" style="left:494px;top:968px;width:92px">'''
 
 # ---------------------------------------------------------------- 3. 월세 60만원 공실에서 월매출 5300만원
@@ -69,7 +68,6 @@ R3 = make_switch.BASE(1080) + CSS + f'''<style>
 <div class="a hl k" style="top:160px">월세 60만원</div>
 <div class="a hl k" style="top:280px"><span class="r">공실</span>에서</div>
 <div class="a hl k" style="top:400px"><span class="r">월매출 5300만원</span> 달성</div>
-<div class="a fn k" style="left:66px;top:528px">{NOTE}</div>
 <img class="a" src="{LOGO_W}" style="right:48px;top:950px;width:92px">'''
 
 
