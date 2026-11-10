@@ -87,3 +87,73 @@ if __name__ == '__main__':
     for i, im in enumerate(ims):
         sh.paste(im.resize((540, 540)), (i * 552, 0))
     sh.save(os.path.join(HERE, '_sheet_ref3.jpg'), quality=90)
+
+
+# ================================================================ 9:16 (1080x1920)
+# Meta Stories/Reels: key text within y 269-1248, 65px from the sides; bottom 35% imagery only.
+def B916():
+    return make_switch.BASE(1920) + CSS.replace('.ph{left:0;top:0;width:1080px;height:1080px}', '.ph{left:0;top:0;width:1080px;height:1920px}')
+
+
+R1_916 = B916() + f'''<style>
+.bg1{{background:url('{HERO}') 12% 50%/auto 1920px no-repeat;filter:saturate(1.05)}}
+.dim1{{background:linear-gradient(rgba(30,12,4,.55) 0%,rgba(30,12,4,.82) 14%,rgba(30,12,4,.7) 34%,rgba(30,12,4,.25) 52%,rgba(30,12,4,.1) 75%,rgba(30,12,4,.45) 100%)}}
+.blue{{display:inline-block;padding:0 22px 8px;border-radius:16px;background:linear-gradient(135deg,#3AA0FF,#1556E0);color:#fff;box-shadow:0 6px 0 #0B3A9E,0 10px 26px rgba(20,90,255,.45)}}
+.box{{display:inline-block;padding:6px 18px 10px;margin:0 4px;border-radius:10px;background:#fff;color:#2A1206;font-weight:900;letter-spacing:-.04em;line-height:1.15}}
+.box.o{{background:#FF8A1E;color:#fff}}
+.cbtn{{left:0;right:0;top:1118px;display:flex;justify-content:center}}
+.cbtn a{{display:flex;align-items:center;gap:16px;padding:22px 44px;border-radius:70px;background:#1E0D05;box-shadow:0 10px 30px rgba(0,0,0,.45);border:3px solid rgba(255,154,60,.6)}}
+.cbtn span{{font-size:46px;font-weight:900;letter-spacing:-.045em;color:#fff}}
+.cbtn b{{color:#FF9A3C}}
+</style>
+<div class="a ph bg1"></div><div class="a ph dim1"></div>
+<img class="a" src="{LOGO_W}" style="left:494px;top:300px;width:92px">
+<div class="a t k" style="top:430px;font-size:70px;font-weight:900;line-height:1.3">아직 <span class="blue">블루오션</span> <span style="color:#FFB15C">과일카페 창업</span></div>
+<div class="a t k" style="top:540px;font-size:132px">하복당이 <span style="color:#FF9A3C">기회!</span></div>
+<div class="a k" style="left:0;right:0;top:718px;text-align:center"><span class="box" style="font-size:62px">보증금 포함 총 창업비</span></div>
+<div class="a k" style="left:0;right:0;top:818px;text-align:center"><span class="box o" style="font-size:96px">2500만원</span></div>
+<div class="a cbtn k"><a><span>하복당 <b>30초 창업상담</b> 바로가기</span>
+<svg width="34" height="34" viewBox="0 0 34 34"><path d="M8 4 L28 17 L8 30 Z" fill="#fff"/></svg></a></div>'''
+
+R2_916 = B916() + f'''<style>
+.bg2{{left:0;top:300px;width:1080px;height:720px;background:url('{STORE}') -330px 0/auto 720px no-repeat}}
+.top2{{left:0;top:300px;width:1080px;height:120px;background:linear-gradient(#1A0C05,rgba(26,12,5,0))}}
+.dim2{{background:linear-gradient(rgba(20,10,5,0) 0%,rgba(20,10,5,0) 42%,rgba(20,10,5,.8) 50%,#1A0C05 54%)}}
+.y{{color:#FFB13C}}
+</style>
+<div class="a bg2"></div><div class="a top2"></div><div class="a ph dim2"></div>
+<div class="a t k" style="top:1010px;font-size:60px">보증금 1000만원 · 월세 80만원 매장에서</div>
+<div class="a t k" style="top:1096px;font-size:118px">월매출 <span class="y">8200만원?</span></div>
+<img class="a" src="{LOGO_W}" style="left:494px;top:1290px;width:92px">'''
+
+R3_916 = B916() + f'''<style>
+.bg3{{background:url('{DELIV}') 50% 100%/auto 1920px no-repeat}}
+.dim3{{background:linear-gradient(rgba(16,8,4,.6) 0%,rgba(16,8,4,.86) 14%,rgba(16,8,4,.75) 36%,rgba(16,8,4,.3) 56%,rgba(16,8,4,.15) 80%,rgba(16,8,4,.5) 100%)}}
+.pill{{display:inline-block;padding:12px 30px;border-radius:44px;background:#E2361B;color:#fff;font-size:34px;font-weight:800;letter-spacing:-.03em}}
+.hl{{left:64px;color:#fff;font-weight:900;letter-spacing:-.05em;line-height:1.05;font-size:96px;text-shadow:0 4px 18px rgba(0,0,0,.5)}}
+.hl .r{{display:inline-block;padding:2px 16px 8px;background:#E2361B;color:#fff}}
+</style>
+<div class="a ph bg3"></div><div class="a ph dim3"></div>
+<div class="a k" style="left:64px;top:300px"><span class="pill">과일디저트 전문점 하복당</span></div>
+<div class="a hl k" style="top:404px">월세 60만원</div>
+<div class="a hl k" style="top:524px"><span class="r">공실</span>에서</div>
+<div class="a hl k" style="top:644px"><span class="r">월매출 5300만원</span> 달성</div>
+<img class="a" src="{LOGO_W}" style="left:66px;top:790px;width:92px">'''
+
+
+if __name__ == '__main__' and os.environ.get('R916'):
+    from PIL import Image
+    out = os.path.join(HERE, 'out')
+    jobs = []
+    for k, html in (('1', R1_916), ('2', R2_916), ('3', R3_916)):
+        hp = os.path.join(out, f'ref3_{k}_916.html'); open(hp, 'w').write(html)
+        jobs.append({'html': hp, 'out': os.path.join(out, f'ref3_{k}_916.png'), 'width': 1080, 'height': 1920})
+    jp = os.path.join(HERE, '_jobs_ref3.json'); json.dump(jobs, open(jp, 'w'))
+    subprocess.run(['node', os.path.join(HERE, 'render.js'), jp], check=True)
+    ims = []
+    for j in jobs:
+        im = Image.open(j['out']).convert('RGB'); im.save(j['out'][:-4] + '.jpg', quality=93); ims.append(im)
+    sh = Image.new('RGB', (3 * 432 + 24, 768), (28, 28, 28))
+    for i, im in enumerate(ims):
+        sh.paste(im.resize((432, 768)), (i * 444, 0))
+    sh.save(os.path.join(HERE, '_sheet_ref3.jpg'), quality=90)
