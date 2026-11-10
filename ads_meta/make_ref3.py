@@ -29,18 +29,18 @@ body{background:#140A05}
 R1 = make_switch.BASE(1080) + CSS + f'''<style>
 .bg1{{background:url('{HERO}') 50% 60%/auto 1180px no-repeat;filter:saturate(1.05)}}
 .dim1{{background:linear-gradient(rgba(30,12,4,.82) 0%,rgba(30,12,4,.62) 38%,rgba(30,12,4,.2) 62%,rgba(30,12,4,.55) 100%)}}
+.blue{{display:inline-block;padding:0 22px 8px;border-radius:16px;background:linear-gradient(135deg,#3AA0FF,#1556E0);color:#fff;box-shadow:0 6px 0 #0B3A9E,0 10px 26px rgba(20,90,255,.45)}}
 .box{{display:inline-block;padding:6px 18px 10px;margin:0 4px;border-radius:10px;background:#fff;color:#2A1206;font-size:52px;font-weight:900;letter-spacing:-.04em;line-height:1.15}}
 .box.o{{background:#FF8A1E;color:#fff}}
 .cbar{{left:0;right:0;top:984px;height:96px;background:#1E0D05;display:flex;align-items:center;justify-content:center;gap:16px}}
-.cbar span{{font-size:42px;font-weight:900;letter-spacing:-.045em;color:#fff}}
+.cbar span{{font-size:46px;font-weight:900;letter-spacing:-.045em;color:#fff}}
 .cbar b{{color:#FF9A3C}}
 </style>
 <div class="a ph bg1"></div><div class="a ph dim1"></div>
 <img class="a" src="{LOGO_W}" style="right:44px;top:34px;width:92px">
-<div class="a t k" style="top:118px;font-size:56px;font-weight:800">아직 블루오션 <span style="color:#FFB15C">과일카페 창업</span></div>
-<div class="a t k" style="top:196px;font-size:104px">하복당이 <span style="color:#FF9A3C">기회!</span></div>
-<div class="a k" style="left:0;right:0;top:340px;text-align:center"><span class="box">보증금 포함 총 창업비</span><span class="box o">2500만원</span></div>
-<div class="a fn k" style="right:40px;top:918px;text-align:right">*매장 평수·상권·임대 조건에 따라 달라질 수 있음</div>
+<div class="a t k" style="top:96px;font-size:70px;font-weight:900;line-height:1.3">아직 <span class="blue">블루오션</span> <span style="color:#FFB15C">과일카페 창업</span></div>
+<div class="a t k" style="top:206px;font-size:132px">하복당이 <span style="color:#FF9A3C">기회!</span></div>
+<div class="a k" style="left:0;right:0;top:384px;text-align:center"><span class="box" style="font-size:62px">보증금 포함 총 창업비</span><span class="box o" style="font-size:62px">2500만원</span></div>
 <div class="a cbar k"><span>하복당 <b>30초 창업상담</b> 바로가기</span>
 <svg width="34" height="34" viewBox="0 0 34 34"><path d="M8 4 L28 17 L8 30 Z" fill="#fff"/></svg></div>'''
 
