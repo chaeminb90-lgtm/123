@@ -155,26 +155,26 @@ def back(sl):
     picture(sl, os.path.join(H, 'logo_w_4x.png'), 510, 50, 220, 171, name='로고')
     tbox(sl, 0, 246, 1240, 130, [[('카페 사장님께', HEAD, 104, YEL, {'shadow': (SHADOW, 6)}), (' 드리는 편지', HEAD, 104, CREAM, {'shadow': (SHADOW, 6)})]],
          align=PP_ALIGN.CENTER, wrap=False, name='제목')
-    picture(sl, os.path.join(H, 'storefront_wide.jpg'), 60, 376, 1120, 356, kind=MSO_SHAPE.ROUNDED_RECTANGLE, line=YEL, line_w=10,
+    picture(sl, os.path.join(H, 'storefront_wide.jpg'), 60, 370, 1120, 272, kind=MSO_SHAPE.ROUNDED_RECTANGLE, line=YEL, line_w=10,
             name='매장 사진 — 우클릭 > 그림 바꾸기')
-    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 752, 1120, 780, CREAM, radius=44, name='편지 카드')
-    tbox(sl, 130, 790, 980, 64, [[('지금 있는 그 자리, 폐업 말고 다시 시작하는 방법', HEAD, 48, DEEP, None)]], wrap=False, name='편지 제목')
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 664, 1120, 868, CREAM, radius=44, name='편지 카드')
+    tbox(sl, 130, 704, 980, 74, [[('사장님, 요즘 많이 힘드시죠?', HEAD, 56, DEEP, None)]], wrap=False, name='편지 제목')
     O, Bd = {'bold': False}, {'bold': True}
     HL = {'bold': True, 'highlight': 'FFE08A'}
-    t = lambda x, o=None, c='2B140A': (x, BODY, 25, c, o or O)
-    h = lambda x: (x, BODY, 25, 'C2410A', HL)
+    t = lambda x, o=None, c='2B140A': (x, BODY, 29, c, o or O)
+    h = lambda x: (x, BODY, 29, 'C2410A', HL)
     paras = [
-        [t('하복당은 생과일을 사용하는 과일디저트 브랜드입니다. '), t('10평 내외 매장에서 배달과 포장 중심', Bd), t('으로 운영합니다.')],
-        [t('(참고: 전 지점 평균 보증금 1,500만원 · 월세 120만원)')],
-        [h('불도 기름도 쓰지 않고'), t(' 정해진 레시피대로 만들어 '), h('기본 교육은 3일'), t('이면 됩니다. '), t('배달앱 관리와 마케팅도 본사가 전체적으로 대신해 드립니다.', Bd)],
-        [t('과일은 가락시장 과일 도매회사 '), h('‘명가’와 직접 연결'), t('해 공급합니다. 소매로 사 오는 방식이 아니라, 저녁에 발주하면 도매회사에서 매장 앞까지 바로 보내 드립니다.')],
-        [t('인테리어를 새로 하지 않아도 됩니다. '), h('간판만 달면'), t(' 지금 그 자리에서 바로 시작할 수 있습니다.')],
-        [h('가맹비 300만원은 전액 면제'), t(', '), t('교육비 200만원', Bd), t('만 받습니다. 200만원이 아깝게 느껴지신다면 한 번만 생각해 주세요. 그 200만원으로, 지금 그 자리를 '),
-         h('+500만원 더 버는 매장'), t('으로 만들 수 있도록 최선을 다해 돕겠습니다.')],
-        [t('매출과 비용은 1:1 미팅에서 손익계산서와 원가 전표로 보여 드리고, 수익 자료는 서면으로 공유드립니다.')],
+        [t('카페 하나 지키는 게 얼마나 버거운지 잘 압니다. 문 닫는 가게 소식이 '), h('남 얘기 같지 않으실'), t(' 겁니다.')],
+        [t('‘배달은 남는 게 없다’고 생각하시죠? 맞습니다. '), t('가격이 정해진 치킨·피자', Bd), t('라면요.')],
+        [t('그런데 '), h('파인애플 250g 원가'), t(', 알고 계신가요? 같은 사과도 한 개에 1천 원부터 1만 원까지, 과일은 상품성에 따라 값이 크게 다릅니다. 그래서 하복당은 '),
+         t('가락시장 도매회사와 직접', Bd), t(' 손을 잡았습니다.')],
+        [t('말로만 소자본이 아니라, '), t('돈이 없어도 의지와 열정만 있으면', Bd), t(' 시작할 수 있는 브랜드를 만들고 싶었습니다.')],
+        [t('그래서 '), h('가맹비는 받지 않습니다.'), t(' 교육비 200만원만 받습니다. 인테리어 없이 '), h('간판만 달면 끝'), t('입니다. 부자재요? 본사에서 비싸게 사실 필요 없이 '),
+         t('원하는 곳에서 자유롭게', Bd), t(' 사시면 됩니다.')],
+        [t('본사만 배부른 브랜드가 아니라, '), h('함께 돈 버는 브랜드'), t('를 만들겠습니다. 지금의 적자, 저희와 같이 이겨내 봅시다.')],
     ]
-    tbox(sl, 130, 868, 980, 580, paras, line=1.33, after=12, name='편지 본문')
-    tbox(sl, 640, 1458, 470, 64, [[('하복당 가맹본부 드림', PEN, 54, 'C2410A', None)]], align=PP_ALIGN.RIGHT, wrap=False, name='서명')
+    tbox(sl, 130, 796, 980, 650, paras, line=1.3, after=16, name='편지 본문')
+    tbox(sl, 640, 1462, 470, 66, [[('하복당 가맹본부 드림', PEN, 58, 'C2410A', None)]], align=PP_ALIGN.RIGHT, wrap=False, name='서명')
     shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 1556, 190, 180, CREAM, radius=28, name='로고 박스')
     picture(sl, os.path.join(H, 'logo_o_4x.png'), 80, 1588, 150, 117, name='로고(주황)')
     tbox(sl, 300, 1562, 900, 60, [[('궁금하신 점은 1:1 미팅에서 숫자로 보여드립니다.', HEAD, 42, CREAM, None)]], wrap=False, name='안내 문구')
@@ -184,8 +184,8 @@ def back(sl):
 if __name__ == '__main__':
     from PIL import Image
     im = Image.open(os.path.join(H, 'storefront.jpg')).convert('RGB')      # whole storefront, cropped only to the 1120:420 frame
-    th = round(im.width * 356 / 1120)
-    t0 = max(0, (im.height - th) // 2)
+    th = round(im.width * 272 / 1120)
+    t0 = max(0, round((im.height - th) * 0.26))
     im.crop((0, t0, im.width, t0 + min(th, im.height))).save(os.path.join(H, 'storefront_wide.jpg'), quality=95)
     prs = Presentation()
     prs.slide_width, prs.slide_height = Emu(7560000), Emu(10692000)     # A4 portrait

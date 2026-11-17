@@ -73,18 +73,18 @@ FRONT = HEAD + f'''<style>
 BACK = HEAD + f'''<style>
 .t{{left:0;right:0;top:250px;text-align:center;font-size:104px}}
 .t .y{{color:var(--yel)}}
-.store{{left:60px;top:376px;width:1120px;height:356px;border-radius:36px;border:10px solid var(--yel);
-  background:#fff url('{u("storefront.jpg")}') 50% 50%/1100px auto no-repeat;box-shadow:0 14px 30px rgba(90,30,0,.3)}}
-.card{{left:60px;top:752px;width:1120px;height:780px;border-radius:44px;background:var(--cream);color:var(--ink)}}
+.store{{left:60px;top:370px;width:1120px;height:272px;border-radius:36px;border:10px solid var(--yel);
+  background:#fff url('{u("storefront.jpg")}') 50% 26%/1100px auto no-repeat;box-shadow:0 14px 30px rgba(90,30,0,.3)}}
+.card{{left:60px;top:664px;width:1120px;height:868px;border-radius:44px;background:var(--cream);color:var(--ink)}}
 .ph{{left:70px;top:56px;width:300px;height:300px;border-radius:50%;border:12px solid var(--deep);box-shadow:0 0 0 10px var(--yel);
   background:url('{u("storefront.jpg")}') 22% 50%/auto 300px no-repeat}}
-.hl{{left:70px;top:40px;font-size:48px;color:var(--deep);line-height:1.1}}
+.hl{{left:70px;top:42px;font-size:56px;color:var(--deep);line-height:1.1}}
 .by{{right:70px;top:54px;font-size:0px;font-weight:700;color:#7A5A44}}
-.body{{left:70px;right:70px;top:118px;font-size:25px;line-height:1.58;letter-spacing:-.03em;font-weight:500;color:#2B140A}}
-.body p{{margin-bottom:13px}}
+.body{{left:70px;right:70px;top:132px;font-size:29px;line-height:1.56;letter-spacing:-.03em;font-weight:500;color:#2B140A}}
+.body p{{margin-bottom:16px}}
 .body b{{font-weight:800}}
 .body m{{font-weight:800;color:#C2410A;background:linear-gradient(transparent 58%,#FFE08A 58%)}}
-.sign{{right:70px;bottom:16px;font-family:'Nanum Pen Script';font-size:54px;color:#C2410A}}
+.sign{{right:70px;bottom:14px;font-family:'Nanum Pen Script';font-size:58px;color:#C2410A}}
 .qrbox{{left:60px;top:1556px;width:190px;height:180px;border-radius:28px;background:var(--cream);display:flex;align-items:center;justify-content:center}}
 .ask{{left:300px;top:1566px;font-size:42px}}
 .tel{{left:296px;top:1626px;font-size:96px;white-space:nowrap;color:var(--yel);text-shadow:0 7px 0 #8A2F04;display:flex;align-items:center;gap:22px}}
@@ -94,15 +94,15 @@ BACK = HEAD + f'''<style>
 <div class="a t bh sh"><span class="y">카페 사장님께</span> 드리는 편지</div>
 <div class="a store"></div>
 <div class="a card">
- <div class="a hl bh">지금 있는 그 자리, 폐업 말고 다시 시작하는 방법</div>
+ <div class="a hl bh">사장님, 요즘 많이 힘드시죠?</div>
  <div class="a by">하복당 가맹본부</div>
  <div class="a body">
-  <p>하복당은 생과일을 사용하는 과일디저트 브랜드입니다. <b>10평 내외 매장에서 배달과 포장 중심</b>으로 운영합니다.<br>(참고: 전 지점 평균 보증금 1,500만원 · 월세 120만원)</p>
-  <p><m>불도 기름도 쓰지 않고</m> 정해진 레시피대로 만들어 <m>기본 교육은 3일</m>이면 됩니다. <b>배달앱 관리와 마케팅도 본사가 전체적으로 대신해 드립니다.</b></p>
-  <p>과일은 가락시장 과일 도매회사 <m>‘명가’와 직접 연결</m>해 공급합니다. 소매로 사 오는 방식이 아니라, 저녁에 발주하면 도매회사에서 매장 앞까지 바로 보내 드립니다.</p>
-  <p>인테리어를 새로 하지 않아도 됩니다. <m>간판만 달면</m> 지금 그 자리에서 바로 시작할 수 있습니다.</p>
-  <p><m>가맹비 300만원은 전액 면제</m>, <b>교육비 200만원</b>만 받습니다. 200만원이 아깝게 느껴지신다면 한 번만 생각해 주세요. 그 200만원으로, 지금 그 자리를 <m>+500만원 더 버는 매장</m>으로 만들 수 있도록 최선을 다해 돕겠습니다.</p>
-  <p>매출과 비용은 1:1 미팅에서 손익계산서와 원가 전표로 보여 드리고, 수익 자료는 서면으로 공유드립니다.</p>
+  <p>카페 하나 지키는 게 얼마나 버거운지 잘 압니다. 문 닫는 가게 소식이 <m>남 얘기 같지 않으실</m> 겁니다.</p>
+  <p>‘배달은 남는 게 없다’고 생각하시죠? 맞습니다. <b>가격이 정해진 치킨·피자</b>라면요.</p>
+  <p>그런데 <m>파인애플 250g 원가</m>, 알고 계신가요? 같은 사과도 한 개에 1천 원부터 1만 원까지, 과일은 상품성에 따라 값이 크게 다릅니다. 그래서 하복당은 <b>가락시장 도매회사와 직접</b> 손을 잡았습니다.</p>
+  <p>말로만 소자본이 아니라, <b>돈이 없어도 의지와 열정만 있으면</b> 시작할 수 있는 브랜드를 만들고 싶었습니다.</p>
+  <p>그래서 <m>가맹비는 받지 않습니다.</m> 교육비 200만원만 받습니다. 인테리어 없이 <m>간판만 달면 끝</m>입니다. 부자재요? 본사에서 비싸게 사실 필요 없이 <b>원하는 곳에서 자유롭게</b> 사시면 됩니다.</p>
+  <p>본사만 배부른 브랜드가 아니라, <m>함께 돈 버는 브랜드</m>를 만들겠습니다. 지금의 적자, 저희와 같이 이겨내 봅시다.</p>
  </div>
  <div class="a sign">하복당 가맹본부 드림</div>
 </div>
