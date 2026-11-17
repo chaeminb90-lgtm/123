@@ -120,7 +120,7 @@ def front(sl):
     picture(sl, os.path.join(H, 'logo_w_4x.png'), 84, 64, 300, 233, name='로고')
     picture(sl, os.path.join(H, 'fruit_boxes_sq.jpg'), 690, 50, 500, 500, kind=MSO_SHAPE.OVAL, line=CREAM, line_w=14, name='사진(원) — 우클릭 > 그림 바꾸기')
     shape(sl, MSO_SHAPE.STAR_12_POINT, 930, 400, 250, 250, YEL, rot=-12, name='배지')
-    tbox(sl, 940, 466, 230, 120, [[('교육 이틀,', HEAD, 42, INK, None)], [('바로 오픈!', HEAD, 42, INK, None)]],
+    tbox(sl, 940, 466, 230, 120, [[('교육 3일,', HEAD, 42, INK, None)], [('바로 오픈!', HEAD, 42, INK, None)]],
          align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, wrap=False, rot=-12, name='배지 문구')
     shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 80, 330, 450, 80, CREAM, radius=40, name='상단 말풍선',
           text=[[('카페 운영 중인 사장님!', BODY_XB, 40, INK, None)]])
@@ -130,23 +130,24 @@ def front(sl):
     for i in range(2):
         shape(sl, MSO_SHAPE.ISOSCELES_TRIANGLE, 76 + i * 38, 925, 48, 34, YEL, rot=90, name='화살표')
     tbox(sl, 172, 916, 1000, 70, [[('카페 업종변경 · 숍인숍 가맹점 모집', HEAD, 52, CREAM, None)]], wrap=False, name='모집 문구')
-    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 70, 1010, 1100, 530, CREAM, radius=40, name='카드')
-    rows = [('불·기름\n없는 주방', [('조리가 아니라 ', INK), ('조합', 'E0490A')], '정해진 레시피대로 과일·시럽·토핑을 담아요 · 기본 교육 이틀'),
-            ('검증된\n배달 매출', [('안양점 6월 배달 매출 ', INK), ('5,073만원', 'E0490A')], '배민 약 2,577만원 + 쿠팡이츠 약 2,497만원 · 영업잔여금 21.3%'),
-            ('투명한\n과일 공급', [('가락시장 경매가 + ', INK), ('원가 전표', 'E0490A')], '박스당 1,000원만 붙여 본점과 같은 단가로 공급'),
-            ('카페 그대로\n숍인숍', [('운영 중인 카페에 ', INK), ('하복당 더하기', 'E0490A')], '간판·내부 주황색 페인트는 필수 · 10평 내외, 배달·포장 중심')]
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 70, 996, 1100, 600, CREAM, radius=40, name='카드')
+    rows = [('불·기름\n없는 주방', [('과일을 ', INK), ('담기만 하면 끝!', 'E0490A')], '교육 3일이면 나도 과일 마스터!'),
+            ('검증된\n배달 매출', [('구월점 배달 매출 ', INK), ('8,200만원', 'E0490A')], '인계점 6월 7,200만원 · 7월 전 지점 평균 5,000만원 달성'),
+            ('투명한\n과일 공급', [('가락시장 경매가로 ', INK), ('매장 앞까지', 'E0490A')], '저녁에 발주하면 가락시장 과일 도매회사가 매장 앞까지 바로 배달'),
+            ('로스율\n0%', [('썩은 과일은 ', INK), ('100% 환불', 'E0490A')], '과일 단 하나라도 상한 채 배송되면 전액 환불해 드립니다'),
+            ('간판만 바꾸면\n바로 시작', [('도마와 칼', 'E0490A'), ('만 있으면 OK', INK)], '인테리어 공사 없이 간판만 달면 바로 시작')]
     for i, (badge, title, sub) in enumerate(rows):
-        y0 = 1036 + i * 119
-        shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 110, y0 + 11, 200, 96, DEEP, radius=20, name=f'배지 {i + 1}',
-              text=[[(t, HEAD, 32, CREAM, None)] for t in badge.split('\n')])
-        tbox(sl, 344, y0 + 14, 800, 58, [[(t, HEAD, 46, c, None) for t, c in title]], wrap=False, name=f'항목 {i + 1} 제목')
-        tbox(sl, 344, y0 + 72, 800, 36, [[(sub, BODY_SB, 26, '5A3A26', None)]], wrap=False, name=f'항목 {i + 1} 설명')
-        if i < 3:
-            ln = sl.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, E(110), E(y0 + 119), E(1130), E(y0 + 119))
+        y0 = 1016 + i * 112
+        shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 110, y0 + 11, 200, 90, DEEP, radius=20, name=f'배지 {i + 1}',
+              text=[[(t, HEAD, 29, CREAM, None)] for t in badge.split('\n')])
+        tbox(sl, 344, y0 + 14, 800, 56, [[(t, HEAD, 44, c, None) for t, c in title]], wrap=False, name=f'항목 {i + 1} 제목')
+        tbox(sl, 344, y0 + 70, 800, 34, [[(sub, BODY_SB, 25, '5A3A26', None)]], wrap=False, name=f'항목 {i + 1} 설명')
+        if i < 4:
+            ln = sl.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, E(110), E(y0 + 112), E(1130), E(y0 + 112))
             ln.line.color.rgb = C('E8C9AC'); ln.line.width = E(3); ln.line.dash_style = MSO_LINE_DASH_STYLE.DASH
-    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 70, 1614, 270, 84, YEL, radius=18, name='미팅 버튼',
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 70, 1636, 270, 84, YEL, radius=18, name='미팅 버튼',
           text=[[('1:1 미팅 예약', HEAD, 40, INK, None)]])
-    tbox(sl, 360, 1592, 810, 130, [[(PHONE, HEAD, 104, CREAM, {'shadow': (SHADOW, 7)})]], align=PP_ALIGN.RIGHT, wrap=False, name='전화번호')
+    tbox(sl, 360, 1614, 810, 130, [[(PHONE, HEAD, 104, CREAM, {'shadow': (SHADOW, 7)})]], align=PP_ALIGN.RIGHT, wrap=False, name='전화번호')
 
 
 def back(sl):
@@ -154,25 +155,26 @@ def back(sl):
     picture(sl, os.path.join(H, 'logo_w_4x.png'), 510, 50, 220, 171, name='로고')
     tbox(sl, 0, 246, 1240, 130, [[('카페 사장님께', HEAD, 104, YEL, {'shadow': (SHADOW, 6)}), (' 드리는 편지', HEAD, 104, CREAM, {'shadow': (SHADOW, 6)})]],
          align=PP_ALIGN.CENTER, wrap=False, name='제목')
-    picture(sl, os.path.join(H, 'storefront_wide.jpg'), 60, 380, 1120, 420, kind=MSO_SHAPE.ROUNDED_RECTANGLE, line=YEL, line_w=10,
+    picture(sl, os.path.join(H, 'storefront_wide.jpg'), 60, 376, 1120, 356, kind=MSO_SHAPE.ROUNDED_RECTANGLE, line=YEL, line_w=10,
             name='매장 사진 — 우클릭 > 그림 바꾸기')
-    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 830, 1120, 700, CREAM, radius=44, name='편지 카드')
-    tbox(sl, 130, 872, 760, 70, [[('카페 자리에서 다시 시작하는 방법', HEAD, 54, DEEP, None)]], wrap=False, name='편지 제목')
-    tbox(sl, 860, 892, 250, 40, [[('하복당 가맹본부', BODY, 26, '7A5A44', {'bold': True})]], align=PP_ALIGN.RIGHT, wrap=False, name='보내는 사람')
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 752, 1120, 780, CREAM, radius=44, name='편지 카드')
+    tbox(sl, 130, 790, 980, 64, [[('지금 있는 그 자리, 폐업 말고 다시 시작하는 방법', HEAD, 48, DEEP, None)]], wrap=False, name='편지 제목')
     O, Bd = {'bold': False}, {'bold': True}
     HL = {'bold': True, 'highlight': 'FFE08A'}
+    t = lambda x, o=None, c='2B140A': (x, BODY, 25, c, o or O)
+    h = lambda x: (x, BODY, 25, 'C2410A', HL)
     paras = [
-        [('하복당은 생과일을 손질해 컵과 그릇에 담아 파는 과일디저트 브랜드입니다. ', BODY, 25, '2B140A', O), ('10평 내외 매장에서 배달과 포장 중심', BODY, 25, '2B140A', Bd), ('으로 운영합니다.', BODY, 25, '2B140A', O)],
-        [('메뉴는 조리가 아니라 조합입니다. ', BODY, 25, '2B140A', O), ('불도 기름도 쓰지 않고', BODY, 25, 'C2410A', HL), (' 정해진 레시피대로 만들어 ', BODY, 25, '2B140A', O),
-         ('기본 교육은 이틀', BODY, 25, 'C2410A', HL), ('이면 됩니다. 오픈 전 상권 분석과 배달앱 세팅, 초기 바이럴은 본사가 함께 준비합니다.', BODY, 25, '2B140A', O)],
-        [('과일은 ‘명가’가 가락시장 중앙청과 경매에서 매입해 보내 드립니다. ', BODY, 25, '2B140A', O), ('원가 전표', BODY, 25, 'C2410A', HL), ('를 함께 드리고, ', BODY, 25, '2B140A', O),
-         ('박스당 1,000원', BODY, 25, 'C2410A', HL), ('만 붙여 본점과 같은 단가로 공급합니다.', BODY, 25, '2B140A', O)],
-        [('운영 중인 카페에 하복당을 더하는 ', BODY, 25, '2B140A', O), ('숍인숍', BODY, 25, 'C2410A', HL), ('도 가능합니다. 간판과 내부 주황색 페인트는 꼭 갖추셔야 합니다.', BODY, 25, '2B140A', O)],
-        [('매출과 비용은 1:1 미팅에서 손익계산서와 원가 전표로 보여 드리고, 수익 자료는 서면으로 드립니다. 정보공개서와 계약서(안)를 받으신 뒤 ', BODY, 25, '2B140A', O),
-         ('14일이 지나야 계약', BODY, 25, '2B140A', Bd), ('합니다. ', BODY, 25, '2B140A', O), ('충분히 따져 보고 결정하세요.', BODY, 25, '2B140A', Bd)],
+        [t('하복당은 생과일을 사용하는 과일디저트 브랜드입니다. '), t('10평 내외 매장에서 배달과 포장 중심', Bd), t('으로 운영합니다.')],
+        [t('(참고: 전 지점 평균 보증금 1,500만원 · 월세 120만원)')],
+        [h('불도 기름도 쓰지 않고'), t(' 정해진 레시피대로 만들어 '), h('기본 교육은 3일'), t('이면 됩니다. '), t('배달앱 관리와 마케팅도 본사가 전체적으로 대신해 드립니다.', Bd)],
+        [t('과일은 가락시장 과일 도매회사 '), h('‘명가’와 직접 연결'), t('해 공급합니다. 소매로 사 오는 방식이 아니라, 저녁에 발주하면 도매회사에서 매장 앞까지 바로 보내 드립니다.')],
+        [t('인테리어를 새로 하지 않아도 됩니다. '), h('간판만 달면'), t(' 지금 그 자리에서 바로 시작할 수 있습니다.')],
+        [h('가맹비 300만원은 전액 면제'), t(', '), t('교육비 200만원', Bd), t('만 받습니다. 200만원이 아깝게 느껴지신다면 한 번만 생각해 주세요. 그 200만원으로, 지금 그 자리를 '),
+         h('+500만원 더 버는 매장'), t('으로 만들 수 있도록 최선을 다해 돕겠습니다.')],
+        [t('매출과 비용은 1:1 미팅에서 손익계산서와 원가 전표로 보여 드리고, 수익 자료는 서면으로 공유드립니다.')],
     ]
-    tbox(sl, 130, 954, 980, 470, paras, line=1.38, after=12, name='편지 본문')
-    tbox(sl, 640, 1456, 470, 64, [[('하복당 가맹본부 드림', PEN, 54, 'C2410A', None)]], align=PP_ALIGN.RIGHT, wrap=False, name='서명')
+    tbox(sl, 130, 868, 980, 580, paras, line=1.33, after=12, name='편지 본문')
+    tbox(sl, 640, 1458, 470, 64, [[('하복당 가맹본부 드림', PEN, 54, 'C2410A', None)]], align=PP_ALIGN.RIGHT, wrap=False, name='서명')
     shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 1556, 190, 180, CREAM, radius=28, name='로고 박스')
     picture(sl, os.path.join(H, 'logo_o_4x.png'), 80, 1588, 150, 117, name='로고(주황)')
     tbox(sl, 300, 1562, 900, 60, [[('궁금하신 점은 1:1 미팅에서 숫자로 보여드립니다.', HEAD, 42, CREAM, None)]], wrap=False, name='안내 문구')
@@ -182,9 +184,9 @@ def back(sl):
 if __name__ == '__main__':
     from PIL import Image
     im = Image.open(os.path.join(H, 'storefront.jpg')).convert('RGB')      # whole storefront, cropped only to the 1120:420 frame
-    tw = round(im.height * 1120 / 420)
-    l = max(0, (im.width - tw) // 2)
-    im.crop((l, 0, l + min(tw, im.width), im.height)).save(os.path.join(H, 'storefront_wide.jpg'), quality=95)
+    th = round(im.width * 356 / 1120)
+    t0 = max(0, (im.height - th) // 2)
+    im.crop((0, t0, im.width, t0 + min(th, im.height))).save(os.path.join(H, 'storefront_wide.jpg'), quality=95)
     prs = Presentation()
     prs.slide_width, prs.slide_height = Emu(7560000), Emu(10692000)     # A4 portrait
     blank = prs.slide_layouts[6]
