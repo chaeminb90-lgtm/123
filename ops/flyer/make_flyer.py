@@ -71,38 +71,40 @@ FRONT = HEAD + f'''<style>
 '''
 
 BACK = HEAD + f'''<style>
-.t{{left:0;right:0;top:250px;text-align:center;font-size:104px}}
+.t{{left:0;right:0;top:186px;text-align:center;font-size:94px}}
 .t .y{{color:var(--yel)}}
-.store{{left:60px;top:370px;width:1120px;height:272px;border-radius:36px;border:10px solid var(--yel);
-  background:#fff url('{u("storefront.jpg")}') 50% 26%/1100px auto no-repeat;box-shadow:0 14px 30px rgba(90,30,0,.3)}}
-.card{{left:60px;top:664px;width:1120px;height:868px;border-radius:44px;background:var(--cream);color:var(--ink)}}
+.store{{left:60px;top:306px;width:1120px;height:196px;border-radius:36px;border:10px solid var(--yel);
+  background:#fff url('{u("storefront.jpg")}') 50% 20%/1100px auto no-repeat;box-shadow:0 14px 30px rgba(90,30,0,.3)}}
+.card{{left:60px;top:520px;width:1120px;height:1030px;border-radius:44px;background:var(--cream);color:var(--ink)}}
 .ph{{left:70px;top:56px;width:300px;height:300px;border-radius:50%;border:12px solid var(--deep);box-shadow:0 0 0 10px var(--yel);
   background:url('{u("storefront.jpg")}') 22% 50%/auto 300px no-repeat}}
-.hl{{left:70px;top:42px;font-size:56px;color:var(--deep);line-height:1.1}}
+.hl{{left:70px;top:40px;font-size:64px;color:var(--deep);line-height:1.1}}
 .by{{right:70px;top:54px;font-size:0px;font-weight:700;color:#7A5A44}}
-.body{{left:70px;right:70px;top:132px;font-size:29px;line-height:1.56;letter-spacing:-.03em;font-weight:500;color:#2B140A}}
-.body p{{margin-bottom:16px}}
+.body{{left:70px;right:70px;top:132px;font-size:31px;line-height:1.46;letter-spacing:-.03em;font-weight:500;color:#2B140A}}
+.body p{{margin-bottom:18px}}
+.call{{margin:2px 0 20px;padding:14px 26px 16px;border-radius:18px;background:#FFE7A6;border-left:12px solid #F06A0F;
+  color:#B8430A;font-weight:800;font-size:34px;line-height:1.36;letter-spacing:-.035em}}
 .body b{{font-weight:800}}
 .body m{{font-weight:800;color:#C2410A;background:linear-gradient(transparent 58%,#FFE08A 58%)}}
-.sign{{right:70px;bottom:14px;font-family:'Nanum Pen Script';font-size:58px;color:#C2410A}}
-.qrbox{{left:60px;top:1556px;width:190px;height:180px;border-radius:28px;background:var(--cream);display:flex;align-items:center;justify-content:center}}
-.ask{{left:300px;top:1566px;font-size:42px}}
-.tel{{left:296px;top:1626px;font-size:96px;white-space:nowrap;color:var(--yel);text-shadow:0 7px 0 #8A2F04;display:flex;align-items:center;gap:22px}}
+.sign{{right:70px;bottom:18px;font-family:'Nanum Pen Script';font-size:64px;color:#C2410A}}
+.qrbox{{left:60px;top:1564px;width:190px;height:180px;border-radius:28px;background:var(--cream);display:flex;align-items:center;justify-content:center}}
+.ask{{left:300px;top:1570px;font-size:42px}}
+.tel{{left:296px;top:1630px;font-size:96px;white-space:nowrap;color:var(--yel);text-shadow:0 7px 0 #8A2F04;display:flex;align-items:center;gap:22px}}
 .small{{left:312px;top:1692px;font-size:20px;font-weight:600;color:rgba(255,244,230,.92)}}
 </style>
-<img class="a" src="{u('logo_w_4x.png')}" style="left:510px;top:50px;width:220px">
+<img class="a" src="{u('logo_w_4x.png')}" style="left:535px;top:36px;width:170px">
 <div class="a t bh sh"><span class="y">카페 사장님께</span> 드리는 편지</div>
 <div class="a store"></div>
 <div class="a card">
  <div class="a hl bh">사장님, 요즘 많이 힘드시죠?</div>
  <div class="a by">하복당 가맹본부</div>
  <div class="a body">
-  <p>카페 하나 지키는 게 얼마나 버거운지 잘 압니다. 문 닫는 가게 소식이 <m>남 얘기 같지 않으실</m> 겁니다.</p>
-  <p>‘배달은 남는 게 없다’고 생각하시죠? 맞습니다. <b>가격이 정해진 치킨·피자</b>라면요.</p>
-  <p>그런데 <m>파인애플 250g 원가</m>, 알고 계신가요? 같은 사과도 한 개에 1천 원부터 1만 원까지, 과일은 상품성에 따라 값이 크게 다릅니다. 그래서 하복당은 <b>가락시장 도매회사와 직접</b> 손을 잡았습니다.</p>
-  <p>말로만 소자본이 아니라, <b>돈이 없어도 의지와 열정만 있으면</b> 시작할 수 있는 브랜드를 만들고 싶었습니다.</p>
-  <p>그래서 <m>가맹비는 받지 않습니다.</m> 교육비 200만원만 받습니다. 인테리어 없이 <m>간판만 달면 끝</m>입니다. 부자재요? 본사에서 비싸게 사실 필요 없이 <b>원하는 곳에서 자유롭게</b> 사시면 됩니다.</p>
-  <p>본사만 배부른 브랜드가 아니라, <m>함께 돈 버는 브랜드</m>를 만들겠습니다. 지금의 적자, 저희와 같이 이겨내 봅시다.</p>
+  <p>카페 하나 지키는 게 얼마나 버거운지 잘 압니다.<br>문 닫는 가게 소식이 남 얘기 같지 않으실 겁니다.</p>
+  <p>‘배달은 남는 게 없다’고 생각하시죠? 맞습니다.<br>가격이 정해진 치킨·피자라면요.</p>
+  <p>그런데 파인애플 250g 원가, 알고 계신가요?<br>같은 사과도 한 개에 1천 원부터 1만 원까지,<br>과일은 상품성에 따라 값이 크게 다릅니다.</p>
+  <div class="call">그래서 하복당은<br>가락시장 도매회사와 직접 손을 잡았습니다.</div>
+  <p>말로만 소자본이 아니라,<br>돈이 없어도 의지와 열정만 있으면<br>시작할 수 있는 브랜드를 만들고 싶었습니다.</p>
+  <p>본사만 배부른 브랜드가 아니라,<br><b>함께 돈 버는 브랜드</b>를 만들겠습니다.<br>지금의 적자. 저희와 함께라면 분명 이겨낼 수 있습니다.</p>
  </div>
  <div class="a sign">하복당 가맹본부 드림</div>
 </div>

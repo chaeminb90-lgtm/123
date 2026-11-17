@@ -60,8 +60,12 @@ def tbox(sl, x, y, w, h, paras, *, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, w
         if line: p.line_spacing = line
         if after: p.space_after = FPT(after)
         for text, font, size, color, opt in runs:
-            r = p.add_run(); r.text = text
-            set_font(r, font, size, color, **(opt or {}))
+            for k, piece in enumerate(text.split('\n')):
+                if k:
+                    p.add_line_break()
+                if piece:
+                    r = p.add_run(); r.text = piece
+                    set_font(r, font, size, color, **(opt or {}))
     return tb
 
 
@@ -152,40 +156,39 @@ def front(sl):
 
 def back(sl):
     background(sl)
-    picture(sl, os.path.join(H, 'logo_w_4x.png'), 510, 50, 220, 171, name='로고')
-    tbox(sl, 0, 246, 1240, 130, [[('카페 사장님께', HEAD, 104, YEL, {'shadow': (SHADOW, 6)}), (' 드리는 편지', HEAD, 104, CREAM, {'shadow': (SHADOW, 6)})]],
+    picture(sl, os.path.join(H, 'logo_w_4x.png'), 535, 36, 170, 132, name='로고')
+    tbox(sl, 0, 182, 1240, 120, [[('카페 사장님께', HEAD, 94, YEL, {'shadow': (SHADOW, 6)}), (' 드리는 편지', HEAD, 94, CREAM, {'shadow': (SHADOW, 6)})]],
          align=PP_ALIGN.CENTER, wrap=False, name='제목')
-    picture(sl, os.path.join(H, 'storefront_wide.jpg'), 60, 370, 1120, 272, kind=MSO_SHAPE.ROUNDED_RECTANGLE, line=YEL, line_w=10,
+    picture(sl, os.path.join(H, 'storefront_wide.jpg'), 60, 306, 1120, 196, kind=MSO_SHAPE.ROUNDED_RECTANGLE, line=YEL, line_w=10,
             name='매장 사진 — 우클릭 > 그림 바꾸기')
-    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 664, 1120, 868, CREAM, radius=44, name='편지 카드')
-    tbox(sl, 130, 704, 980, 74, [[('사장님, 요즘 많이 힘드시죠?', HEAD, 56, DEEP, None)]], wrap=False, name='편지 제목')
-    O, Bd = {'bold': False}, {'bold': True}
-    HL = {'bold': True, 'highlight': 'FFE08A'}
-    t = lambda x, o=None, c='2B140A': (x, BODY, 29, c, o or O)
-    h = lambda x: (x, BODY, 29, 'C2410A', HL)
-    paras = [
-        [t('카페 하나 지키는 게 얼마나 버거운지 잘 압니다. 문 닫는 가게 소식이 '), h('남 얘기 같지 않으실'), t(' 겁니다.')],
-        [t('‘배달은 남는 게 없다’고 생각하시죠? 맞습니다. '), t('가격이 정해진 치킨·피자', Bd), t('라면요.')],
-        [t('그런데 '), h('파인애플 250g 원가'), t(', 알고 계신가요? 같은 사과도 한 개에 1천 원부터 1만 원까지, 과일은 상품성에 따라 값이 크게 다릅니다. 그래서 하복당은 '),
-         t('가락시장 도매회사와 직접', Bd), t(' 손을 잡았습니다.')],
-        [t('말로만 소자본이 아니라, '), t('돈이 없어도 의지와 열정만 있으면', Bd), t(' 시작할 수 있는 브랜드를 만들고 싶었습니다.')],
-        [t('그래서 '), h('가맹비는 받지 않습니다.'), t(' 교육비 200만원만 받습니다. 인테리어 없이 '), h('간판만 달면 끝'), t('입니다. 부자재요? 본사에서 비싸게 사실 필요 없이 '),
-         t('원하는 곳에서 자유롭게', Bd), t(' 사시면 됩니다.')],
-        [t('본사만 배부른 브랜드가 아니라, '), h('함께 돈 버는 브랜드'), t('를 만들겠습니다. 지금의 적자, 저희와 같이 이겨내 봅시다.')],
-    ]
-    tbox(sl, 130, 796, 980, 650, paras, line=1.3, after=16, name='편지 본문')
-    tbox(sl, 640, 1462, 470, 66, [[('하복당 가맹본부 드림', PEN, 58, 'C2410A', None)]], align=PP_ALIGN.RIGHT, wrap=False, name='서명')
-    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 1556, 190, 180, CREAM, radius=28, name='로고 박스')
-    picture(sl, os.path.join(H, 'logo_o_4x.png'), 80, 1588, 150, 117, name='로고(주황)')
-    tbox(sl, 300, 1562, 900, 60, [[('궁금하신 점은 1:1 미팅에서 숫자로 보여드립니다.', HEAD, 42, CREAM, None)]], wrap=False, name='안내 문구')
-    tbox(sl, 296, 1622, 900, 120, [[(PHONE, HEAD, 104, YEL, {'shadow': (SHADOW, 7)})]], wrap=False, name='전화번호')
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 520, 1120, 1030, CREAM, radius=44, name='편지 카드')
+    tbox(sl, 130, 556, 980, 84, [[('사장님, 요즘 많이 힘드시죠?', HEAD, 64, DEEP, None)]], wrap=False, name='편지 제목')
+    t = lambda x, o=None: (x, BODY, 31, '2B140A', o or {'bold': False})
+    tbox(sl, 130, 652, 980, 360, [
+        [t('카페 하나 지키는 게 얼마나 버거운지 잘 압니다.\n문 닫는 가게 소식이 남 얘기 같지 않으실 겁니다.')],
+        [t('‘배달은 남는 게 없다’고 생각하시죠? 맞습니다.\n가격이 정해진 치킨·피자라면요.')],
+        [t('그런데 파인애플 250g 원가, 알고 계신가요?\n같은 사과도 한 개에 1천 원부터 1만 원까지,\n과일은 상품성에 따라 값이 크게 다릅니다.')],
+    ], line=1.22, after=18, name='편지 본문 1')
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 130, 1022, 980, 122, 'FFE7A6', radius=18, name='강조 박스')
+    shape(sl, MSO_SHAPE.RECTANGLE, 130, 1022, 12, 122, 'F06A0F', name='강조 선')
+    tbox(sl, 168, 1036, 920, 96, [[('그래서 하복당은\n가락시장 도매회사와 직접 손을 잡았습니다.', BODY, 34, 'B8430A', {'bold': True})]],
+         line=1.15, anchor=MSO_ANCHOR.MIDDLE, name='강조 문장')
+    tbox(sl, 130, 1172, 980, 290, [
+        [t('말로만 소자본이 아니라,\n돈이 없어도 의지와 열정만 있으면\n시작할 수 있는 브랜드를 만들고 싶었습니다.')],
+        [t('본사만 배부른 브랜드가 아니라,\n'), t('함께 돈 버는 브랜드', {'bold': True}), t('를 만들겠습니다.\n지금의 적자. 저희와 함께라면 분명 이겨낼 수 있습니다.')],
+    ], line=1.22, after=18, name='편지 본문 2')
+    tbox(sl, 640, 1466, 470, 70, [[('하복당 가맹본부 드림', PEN, 64, 'C2410A', None)]], align=PP_ALIGN.RIGHT, wrap=False, name='서명')
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 1564, 190, 180, CREAM, radius=28, name='로고 박스')
+    picture(sl, os.path.join(H, 'logo_o_4x.png'), 80, 1596, 150, 117, name='로고(주황)')
+    tbox(sl, 300, 1570, 900, 60, [[('궁금하신 점은 1:1 미팅에서 숫자로 보여드립니다.', HEAD, 42, CREAM, None)]], wrap=False, name='안내 문구')
+    tbox(sl, 296, 1630, 900, 120, [[(PHONE, HEAD, 104, YEL, {'shadow': (SHADOW, 7)})]], wrap=False, name='전화번호')
 
 
 if __name__ == '__main__':
     from PIL import Image
     im = Image.open(os.path.join(H, 'storefront.jpg')).convert('RGB')      # whole storefront, cropped only to the 1120:420 frame
-    th = round(im.width * 272 / 1120)
-    t0 = max(0, round((im.height - th) * 0.26))
+    th = round(im.width * 196 / 1120)
+    t0 = max(0, round((im.height - th) * 0.20))
     im.crop((0, t0, im.width, t0 + min(th, im.height))).save(os.path.join(H, 'storefront_wide.jpg'), quality=95)
     prs = Presentation()
     prs.slide_width, prs.slide_height = Emu(7560000), Emu(10692000)     # A4 portrait
