@@ -78,15 +78,15 @@ BACK = HEAD + f'''<style>
 .card{{left:60px;top:520px;width:1120px;height:1030px;border-radius:44px;background:var(--cream);color:var(--ink)}}
 .ph{{left:70px;top:56px;width:300px;height:300px;border-radius:50%;border:12px solid var(--deep);box-shadow:0 0 0 10px var(--yel);
   background:url('{u("storefront.jpg")}') 22% 50%/auto 300px no-repeat}}
-.hl{{left:70px;top:40px;font-size:64px;color:var(--deep);line-height:1.1}}
+.hl{{left:0;right:0;text-align:center;top:40px;font-size:64px;color:var(--deep);line-height:1.1}}
 .by{{right:70px;top:54px;font-size:0px;font-weight:700;color:#7A5A44}}
-.body{{left:70px;right:70px;top:132px;font-size:31px;line-height:1.46;letter-spacing:-.03em;font-weight:500;color:#2B140A}}
+.body{{left:70px;right:70px;text-align:center;top:132px;font-size:31px;line-height:1.46;letter-spacing:-.03em;font-weight:500;color:#2B140A}}
 .body p{{margin-bottom:18px}}
-.call{{margin:2px 0 20px;padding:14px 26px 16px;border-radius:18px;background:#FFE7A6;border-left:12px solid #F06A0F;
+.call{{margin:2px 0 20px;padding:14px 26px 16px;border-radius:18px;background:#FFE7A6;border:3px solid #F6A54A;
   color:#B8430A;font-weight:800;font-size:34px;line-height:1.36;letter-spacing:-.035em}}
 .body b{{font-weight:800}}
 .body m{{font-weight:800;color:#C2410A;background:linear-gradient(transparent 58%,#FFE08A 58%)}}
-.sign{{right:70px;bottom:18px;font-family:'Nanum Pen Script';font-size:64px;color:#C2410A}}
+.sign{{left:0;right:0;text-align:center;bottom:18px;font-family:'Nanum Pen Script';font-size:64px;color:#C2410A}}
 .qrbox{{left:60px;top:1564px;width:190px;height:180px;border-radius:28px;background:var(--cream);display:flex;align-items:center;justify-content:center}}
 .ask{{left:300px;top:1570px;font-size:42px}}
 .tel{{left:296px;top:1630px;font-size:96px;white-space:nowrap;color:var(--yel);text-shadow:0 7px 0 #8A2F04;display:flex;align-items:center;gap:22px}}

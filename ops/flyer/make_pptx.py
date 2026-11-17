@@ -162,22 +162,21 @@ def back(sl):
     picture(sl, os.path.join(H, 'storefront_wide.jpg'), 60, 306, 1120, 196, kind=MSO_SHAPE.ROUNDED_RECTANGLE, line=YEL, line_w=10,
             name='매장 사진 — 우클릭 > 그림 바꾸기')
     shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 520, 1120, 1030, CREAM, radius=44, name='편지 카드')
-    tbox(sl, 130, 556, 980, 84, [[('사장님, 요즘 많이 힘드시죠?', HEAD, 64, DEEP, None)]], wrap=False, name='편지 제목')
+    tbox(sl, 60, 556, 1120, 84, [[('사장님, 요즘 많이 힘드시죠?', HEAD, 64, DEEP, None)]], align=PP_ALIGN.CENTER, wrap=False, name='편지 제목')
     t = lambda x, o=None: (x, BODY, 31, '2B140A', o or {'bold': False})
     tbox(sl, 130, 652, 980, 360, [
         [t('카페 하나 지키는 게 얼마나 버거운지 잘 압니다.\n문 닫는 가게 소식이 남 얘기 같지 않으실 겁니다.')],
         [t('‘배달은 남는 게 없다’고 생각하시죠? 맞습니다.\n가격이 정해진 치킨·피자라면요.')],
         [t('그런데 파인애플 250g 원가, 알고 계신가요?\n같은 사과도 한 개에 1천 원부터 1만 원까지,\n과일은 상품성에 따라 값이 크게 다릅니다.')],
-    ], line=1.22, after=18, name='편지 본문 1')
-    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 130, 1022, 980, 122, 'FFE7A6', radius=18, name='강조 박스')
-    shape(sl, MSO_SHAPE.RECTANGLE, 130, 1022, 12, 122, 'F06A0F', name='강조 선')
-    tbox(sl, 168, 1036, 920, 96, [[('그래서 하복당은\n가락시장 도매회사와 직접 손을 잡았습니다.', BODY, 34, 'B8430A', {'bold': True})]],
-         line=1.15, anchor=MSO_ANCHOR.MIDDLE, name='강조 문장')
+    ], align=PP_ALIGN.CENTER, line=1.22, after=18, name='편지 본문 1')
+    shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 130, 1022, 980, 122, 'FFE7A6', radius=18, line='F6A54A', line_w=3, name='강조 박스')
+    tbox(sl, 140, 1036, 960, 96, [[('그래서 하복당은\n가락시장 도매회사와 직접 손을 잡았습니다.', BODY, 34, 'B8430A', {'bold': True})]],
+         align=PP_ALIGN.CENTER, line=1.15, anchor=MSO_ANCHOR.MIDDLE, name='강조 문장')
     tbox(sl, 130, 1172, 980, 290, [
         [t('말로만 소자본이 아니라,\n돈이 없어도 의지와 열정만 있으면\n시작할 수 있는 브랜드를 만들고 싶었습니다.')],
         [t('본사만 배부른 브랜드가 아니라,\n'), t('함께 돈 버는 브랜드', {'bold': True}), t('를 만들겠습니다.\n지금의 적자. 저희와 함께라면 분명 이겨낼 수 있습니다.')],
-    ], line=1.22, after=18, name='편지 본문 2')
-    tbox(sl, 640, 1466, 470, 70, [[('하복당 가맹본부 드림', PEN, 64, 'C2410A', None)]], align=PP_ALIGN.RIGHT, wrap=False, name='서명')
+    ], align=PP_ALIGN.CENTER, line=1.22, after=18, name='편지 본문 2')
+    tbox(sl, 60, 1466, 1120, 70, [[('하복당 가맹본부 드림', PEN, 64, 'C2410A', None)]], align=PP_ALIGN.CENTER, wrap=False, name='서명')
     shape(sl, MSO_SHAPE.ROUNDED_RECTANGLE, 60, 1564, 190, 180, CREAM, radius=28, name='로고 박스')
     picture(sl, os.path.join(H, 'logo_o_4x.png'), 80, 1596, 150, 117, name='로고(주황)')
     tbox(sl, 300, 1570, 900, 60, [[('궁금하신 점은 1:1 미팅에서 숫자로 보여드립니다.', HEAD, 42, CREAM, None)]], wrap=False, name='안내 문구')
