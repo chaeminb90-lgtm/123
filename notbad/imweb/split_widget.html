@@ -1,0 +1,104 @@
+<!-- 낫배드 첫 화면 BRAND / FRANCHISE 선택 (홈 맨 위 코드 섹션). 왼쪽 = 기존 홈 그대로, 오른쪽 = /start 창업 페이지 -->
+<style>
+html.nbs-lock,html.nbs-lock body{overflow:hidden!important}
+#nbSplit{position:fixed;left:0;top:0;width:100%;height:100%;z-index:99990;display:flex;background:#231815;font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;word-break:keep-all;-webkit-font-smoothing:antialiased;transition:opacity .5s ease,visibility .5s}
+#nbSplit *{box-sizing:border-box;margin:0;padding:0}
+#nbSplit.nbs-out{opacity:0;visibility:hidden;pointer-events:none}
+#nbSplit .nbs-side{position:relative;flex:1 1 50%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:20vh;overflow:hidden;text-decoration:none;border:0;cursor:pointer;font:inherit;text-align:center}
+#nbSplit .nbs-brand{background:#231815;color:#fff}
+#nbSplit .nbs-brand .nbs-bg{position:absolute;inset:0;background:url(https://cdn.imweb.me/thumbnail/20260427/24157c834919d.jpg) center/cover;opacity:.32;filter:grayscale(.35);transition:transform 1.2s ease,opacity .6s}
+#nbSplit .nbs-brand::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,24,21,.55),rgba(35,24,21,.2) 45%,rgba(35,24,21,.65));pointer-events:none}
+#nbSplit .nbs-fr{background:#E4E896 url(https://cdn.jsdelivr.net/gh/chaeminb90-lgtm/123@8ce6e03d666e3368bb40057f334357b7cf921d20/notbad/assets/img/bg_lime.jpg) center/cover;color:#231815}
+#nbSplit .nbs-fr::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 26px,transparent 26px 52px);pointer-events:none}
+#nbSplit .nbs-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 24px}
+#nbSplit .nbs-k{font-size:clamp(40px,5.2vw,76px);font-weight:900;letter-spacing:-.02em;line-height:1}
+#nbSplit .nbs-line{display:block;width:72px;height:2px;background:currentColor;opacity:.75;margin:26px 0 24px}
+#nbSplit .nbs-t{font-size:clamp(18px,1.7vw,25px);font-weight:600;line-height:1.5;letter-spacing:-.02em}
+#nbSplit .nbs-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:18px;list-style:none}
+#nbSplit .nbs-tags li{font-size:13px;font-weight:800;letter-spacing:.04em;padding:5px 12px;border-radius:999px;border:1.5px solid currentColor;opacity:.85}
+#nbSplit .nbs-btn{display:inline-flex;align-items:center;gap:8px;margin-top:26px;min-height:52px;padding:0 26px;border-radius:999px;font-size:17px;font-weight:800;transition:transform .2s}
+#nbSplit .nbs-brand .nbs-btn{background:#fff;color:#231815}
+#nbSplit .nbs-fr .nbs-btn{background:#FF420D;color:#fff;box-shadow:0 6px 0 rgba(35,24,21,.18)}
+#nbSplit .nbs-food{position:absolute;z-index:2;left:50%;bottom:-3%;width:min(470px,74%);transform:translateX(-50%) rotate(-4deg);filter:drop-shadow(0 18px 26px rgba(0,0,0,.45));transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+#nbSplit .nbs-store{position:absolute;z-index:2;left:50%;bottom:-40px;width:min(420px,66%);aspect-ratio:1;transform:translateX(-50%) rotate(2deg);border:4px solid #231815;border-radius:22px;overflow:hidden;box-shadow:14px 16px 0 rgba(35,24,21,.16);background:#fff;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+#nbSplit .nbs-store img{width:100%;height:100%;object-fit:cover;display:block}
+#nbSplit .nbs-store span{position:absolute;left:12px;top:12px;background:#231815;color:#E4E896;font-size:12.5px;font-weight:900;padding:5px 11px;border-radius:999px}
+#nbSplit .nbs-logo{position:absolute;z-index:5;left:50%;top:50%;width:clamp(150px,14vw,214px);height:clamp(150px,14vw,214px);transform:translate(-50%,-50%);border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none}
+#nbSplit .nbs-logo img{width:68%;height:auto;display:block}
+@media (hover:hover) and (min-width:768px){
+  #nbSplit .nbs-brand:hover .nbs-bg{transform:scale(1.05);opacity:.4}
+  #nbSplit .nbs-brand:hover .nbs-food{transform:translateX(-50%) rotate(2deg) translateY(-14px)}
+  #nbSplit .nbs-fr:hover .nbs-store{transform:translateX(-50%) rotate(-1deg) translateY(-14px)}
+  #nbSplit .nbs-side:hover .nbs-btn{transform:translateY(-3px)}
+}
+@media (max-width:767px){
+  #nbSplit{flex-direction:column}
+  #nbSplit .nbs-side{padding-top:6.5vh}
+  #nbSplit .nbs-k{font-size:38px}
+  #nbSplit .nbs-line{width:48px;margin:12px 0 10px}
+  #nbSplit .nbs-t{font-size:16px}
+  #nbSplit .nbs-tags{display:none}
+  #nbSplit .nbs-btn{margin-top:12px;min-height:42px;padding:0 18px;font-size:14.5px}
+  #nbSplit .nbs-food{width:min(220px,52%);bottom:-6%}
+  #nbSplit .nbs-store{width:min(180px,40%);bottom:-26px;border-width:3px;border-radius:16px;box-shadow:8px 10px 0 rgba(35,24,21,.16)}
+  #nbSplit .nbs-store span{font-size:10.5px;padding:3px 8px;left:8px;top:8px}
+  #nbSplit .nbs-fr{padding-top:calc(6.5vh + 36px)}
+  #nbSplit .nbs-logo{width:96px;height:96px}
+}
+</style>
+<div id="nbSplit" role="dialog" aria-modal="true" aria-label="낫배드커피 &amp; 샌드위치 둘러보기 선택">
+  <button type="button" class="nbs-side nbs-brand" data-nbs="brand">
+    <span class="nbs-bg" aria-hidden="true"></span>
+    <span class="nbs-in">
+      <span class="nbs-k">BRAND</span>
+      <span class="nbs-line" aria-hidden="true"></span>
+      <span class="nbs-t">낫배드 메뉴와 설립 배경이<br>궁금하신가요?</span>
+      <ul class="nbs-tags" aria-hidden="true"><li>MENU</li><li>STORY</li><li>STORE</li></ul>
+      <span class="nbs-btn">브랜드 둘러보기 →</span>
+    </span>
+    <img class="nbs-food" src="https://cdn.jsdelivr.net/gh/chaeminb90-lgtm/123@8ce6e03d666e3368bb40057f334357b7cf921d20/notbad/assets/img/set.webp" alt="" width="640" height="523">
+  </button>
+  <a class="nbs-side nbs-fr" href="/start" data-nbs="franchise">
+    <span class="nbs-in">
+      <span class="nbs-k">FRANCHISE</span>
+      <span class="nbs-line" aria-hidden="true"></span>
+      <span class="nbs-t">낫배드 창업을<br>생각 중이신가요?</span>
+      <ul class="nbs-tags" aria-hidden="true"><li>창업 비용</li><li>매장 사례</li><li>상담 신청</li></ul>
+      <span class="nbs-btn">창업 문의 →</span>
+    </span>
+    <span class="nbs-store" aria-hidden="true"><img src="https://cdn.jsdelivr.net/gh/chaeminb90-lgtm/123@8ce6e03d666e3368bb40057f334357b7cf921d20/notbad/assets/img/apgu_ext.jpg" alt="" width="966" height="966"><span>압구정점</span></span>
+  </a>
+  <span class="nbs-logo" aria-hidden="true"><img src="https://cdn.imweb.me/thumbnail/20260525/1b17261c82638.png" alt="" width="567" height="585"></span>
+</div>
+<script>
+(function () {
+  var el = document.getElementById('nbSplit');
+  if (!el || el.dataset.on) return; el.dataset.on = '1';
+  var KEY = 'nb_split_done', done = null;
+  try { done = sessionStorage.getItem(KEY); } catch (e) {}
+  // 메뉴 링크(#)로 들어왔거나, 이번 방문에서 이미 고른 경우엔 바로 기존 홈
+  if (location.hash || done || /[?&]nbsplit=off/.test(location.search)) { el.parentNode.removeChild(el); return; }
+  document.body.appendChild(el);   // 섹션 효과(transform) 영향 없이 화면 전체에 고정
+  document.documentElement.classList.add('nbs-lock');
+  if (!document.querySelector('link[href*="pretendardvariable"]')) {
+    var l = document.createElement('link'); l.rel = 'stylesheet';
+    l.href = 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';
+    document.head.appendChild(l);
+  }
+  var mark = function () { try { sessionStorage.setItem(KEY, '1'); } catch (e) {} };
+  var close = function () {
+    mark();
+    el.classList.add('nbs-out');
+    document.documentElement.classList.remove('nbs-lock');
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 600);
+    document.removeEventListener('keydown', onKey);
+  };
+  var onKey = function (e) { if (e.key === 'Escape') close(); };
+  el.querySelector('[data-nbs="brand"]').addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  // 뒤로 가기로 돌아왔을 때(페이지 캐시) 선택 화면이 다시 보이도록
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted && el.parentNode && !el.classList.contains('nbs-out')) document.documentElement.classList.add('nbs-lock');
+  });
+})();
+</script>
