@@ -74,11 +74,15 @@ html.nbs-lock,html.nbs-lock body{overflow:hidden!important}
 (function () {
   var el = document.getElementById('nbSplit');
   if (!el || el.dataset.on) return; el.dataset.on = '1';
+  // 이 코드가 들어 있는 섹션은 화면에 자리를 차지하지 않게 숨김(선택 화면은 body로 옮겨서 표시)
+  var sec = el.closest('.section_wrap');
+  var hideSec = function () { if (sec) sec.style.display = 'none'; };
   var KEY = 'nb_split_done', done = null;
   try { done = sessionStorage.getItem(KEY); } catch (e) {}
   // 메뉴 링크(#)로 들어왔거나, 이번 방문에서 이미 고른 경우엔 바로 기존 홈
-  if (location.hash || done || /[?&]nbsplit=off/.test(location.search)) { el.parentNode.removeChild(el); return; }
+  if (location.hash || done || /[?&]nbsplit=off/.test(location.search)) { el.parentNode.removeChild(el); hideSec(); return; }
   document.body.appendChild(el);   // 섹션 효과(transform) 영향 없이 화면 전체에 고정
+  hideSec();
   document.documentElement.classList.add('nbs-lock');
   if (!document.querySelector('link[href*="pretendardvariable"]')) {
     var l = document.createElement('link'); l.rel = 'stylesheet';
